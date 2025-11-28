@@ -40,6 +40,12 @@
             <input type="password" name="password">
             <br><br>
             <input type="submit" value="Login">
+            <br><br>
+
+              <% if (typeof errorMessage !== 'undefined') { %>
+                <p style="color: red; font-weight: bold;"><%= errorMessage %></p>
+            <% } %>
+
         </form>
         <br>
         <a href="registration">I dont have an account</a>
