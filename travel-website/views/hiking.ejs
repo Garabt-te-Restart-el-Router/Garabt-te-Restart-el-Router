@@ -4,7 +4,7 @@
 <head>
     <style>
         body {
-            background-image: url("public/background2.jpg");
+            background-image: url("background2.jpg");
            background-size: cover;
             background-repeat: no-repeat;
 
@@ -26,13 +26,13 @@
         .container1 {
             position: fixed;
             margin-left: 50px;
-            margin-top: 150px;
+            margin-top: 50px;
             color: white;
         }
         .container2 {
             position: fixed;
            margin-left: 300px;
-            margin-top: 150px;
+            margin-top: 50px;
             color: white;
         }
         #label1 {
@@ -57,7 +57,7 @@
 </head>
 <body>
 
-    <img id= "image" src ="public/hiking.png" alt ="Hiking Logo" width="150" height="150">
+    <img src ="hiking.png" alt ="Hiking Logo" width="150" height="150">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
         <a class="navbar-brand" style="color: rgb(191, 255, 161)">Hiking</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -75,18 +75,22 @@
         </div>
     </nav>
     <div class="container1">
-        <img id="image" src="public/inca.png" width="193" height="300">
+        <img id="image" src="/inca.png" width="193" height="300">
         <br>
         <label id="label1" class="ml-4 my-2">Inca Trail to Machu Picchu</label>
         <br>
         <button onclick="location.href = '/inca';" id="inca" class="btn btn-secondary ml-3"> View </button>
+        <br><br>
+        <button  id="want-to-go" class="btn btn-secondary ml-3"> Want to go </button>
     </div>
     <div class="container2">
-        <img id="image" src="public/annapurna.png" width="193" height="300">
+        <img id="image" src="/annapurna.png" width="193" height="300">
         <br>
         <label id ="label2" class="ml-4 my-2">Annapurna Circuit</label>
         <br>
         <button onclick="location.href = '/annapurna';" id="annapurna" class="btn btn-secondary ml-3"> View </button>
+        <br><br>
+        <button  id="want-to-go" class="btn btn-secondary ml-3"> Want to go </button>
     </div>
 </body>
 </html>
