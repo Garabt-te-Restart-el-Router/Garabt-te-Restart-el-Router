@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= destination.name %></title>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <h1><%= destination.name %></h1>
+    <p>Category: <%= destination.category %></p>
+
+    <form method="POST" action="/destination/<%= destination.name %>/add">
+        <button type="submit">Add to Want-to-Go List</button>
+    </form>
+</body>
+</html>

@@ -56,15 +56,20 @@
     </div>
 
     <div class="categories-container">
-    <% categories.forEach(function(cat) { %>
-        <div class="category-item">
-            <img src="<%= cat.img %>" alt="<%= cat.name %>">
-            <br>
-            <label class="ml-2 my-2"><%= cat.name %></label>
-            <br>
-            <a href="<%= cat.link %>" class="btn btn-secondary mt-2">View</a>
-        </div>
-    <% }); %>
+  <% categories.forEach(function(cat) { %>
+    <div class="category-item">
+      <img src="<%= cat.img %>" alt="<%= cat.name %>">
+      <br>
+      <label class="ml-2 my-2"><%= cat.name %></label>
+      <br>
+      <!-- Button that actually redirects -->
+      <button type="button"
+              class="btn btn-secondary mt-2"
+              onclick="window.location.href='<%= cat.link %>';">
+        View
+      </button>
+    </div>
+  <% }); %>
 </div>
 
     <div class="wanttogo">
