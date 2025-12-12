@@ -1,16 +1,16 @@
-const { MongoClient } = require('mongodb');
+// database.js
+const { MongoClient } = require("mongodb");
 
-const url = "mongodb://127.0.0.1:27017";
+const url = "mongodb://127.0.0.1:27017"; // MongoDB URL
 const client = new MongoClient(url);
 
-let db = null;
+const dbName = "myDB"; // Must match project description
 
 async function connect() {
-    if (db) return db;
-
-    await client.connect();
-    db = client.db("myDB");        // Required name
-    return db;
+    if (!client.isConnected?.()) {
+        await client.connect();
+    }
+    return client.db(dbName);
 }
 
 module.exports = { connect };

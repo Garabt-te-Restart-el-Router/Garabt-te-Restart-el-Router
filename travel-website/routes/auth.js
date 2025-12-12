@@ -1,3 +1,4 @@
+// routes/auth.js
 const express = require("express");
 const router = express.Router();
 const { connect } = require("../database");
@@ -7,7 +8,7 @@ router.get("/login", (req, res) => {
     res.render("login", { error: null, success: null });
 });
 
-// ---------- REGISTRATION PAGE ----------
+// ---------- REGISTER PAGE ----------
 router.get("/register", (req, res) => {
     res.render("register", { error: null });
 });
@@ -15,22 +16,18 @@ router.get("/register", (req, res) => {
 // ---------- REGISTER POST ----------
 router.post("/register", async (req, res) => {
     const { username, password } = req.body;
-
     const db = await connect();
     const users = db.collection("myCollection");
 
-    // Empty fields?
     if (!username || !password) {
         return res.render("register", { error: "All fields are required." });
     }
 
-    // Check if user already exists
     const existing = await users.findOne({ username });
     if (existing) {
         return res.render("register", { error: "Username already exists." });
     }
 
-    // Insert user
     await users.insertOne({
         username,
         password,
@@ -46,7 +43,6 @@ router.post("/register", async (req, res) => {
 // ---------- LOGIN POST ----------
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
-
     const db = await connect();
     const users = db.collection("myCollection");
 
@@ -56,9 +52,7 @@ router.post("/login", async (req, res) => {
         return res.render("login", { error: "Invalid username or password.", success: null });
     }
 
-    // Set session
-    req.session.user = user;
-
+    req.session.user = { username: user.username, wantToGo: user.wantToGo };
     return res.redirect("/home");
 });
 

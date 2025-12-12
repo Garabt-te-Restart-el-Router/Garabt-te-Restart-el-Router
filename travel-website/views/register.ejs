@@ -29,14 +29,14 @@
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Login</h2>
-        <form method="POST" action="/login">
+        <h2>Register</h2>
+        <form method="POST" action="/register">
             <div class="form-group">
                 <label>Username</label>
                 <input type="text" name="username" class="form-control" required>
@@ -45,15 +45,12 @@
                 <label>Password</label>
                 <input type="password" name="password" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="btn btn-primary">Register</button>
         </form>
         <% if (error) { %>
             <p class="text-danger mt-2"><%= error %></p>
         <% } %>
-        <% if (success) { %>
-            <p class="text-success mt-2"><%= success %></p>
-        <% } %>
-        <a href="/register">I don't have an account</a>
+        <a href="/login">Back to Login</a>
     </div>
 </body>
 </html>

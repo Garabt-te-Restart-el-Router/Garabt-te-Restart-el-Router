@@ -12,60 +12,37 @@
             color: white;
             text-align: center;
             -webkit-text-stroke: 1px blue;
+            margin-top: 50px;
         }
 
-        .cont {
-            position: relative;
-            left: 600px;
-            top: 50px;
-            color: white;
-            -webkit-text-stroke: 0.5px black;
+        .categories-container {
+            display: flex;         /* arrange items in a row */
+            justify-content: start; /* align items to start */
+            gap: 50px;             /* spacing between items */
+            margin: 50px auto;     /* center container horizontally */
+            padding: 20px;
+            flex-wrap: wrap;       /* wrap to next line if screen is small */
+            max-width: 1200px;
         }
 
-        .container1 {
-            position: fixed;
-            left: 50px;
-            top: 150px;
-            color: white;
-        }
-
-        .container2 {
-            position: fixed;
-            left: 200px;
-            top: 150px;
+        .category-item {
+            text-align: center;
             color: white;
         }
 
-        .container3 {
-            position: fixed;
-            left: 350px;
-            top: 150px;
-            color: white;
-        }
-
-        .container4 {
-            position: fixed;
-            left: 500px; 
-            top: 150px;
-            color: white;
-        }
-
-        .container5 {
-            position: fixed;
-            left: 650px; 
-            top: 150px;
-            color: white;
+        .category-item img {
+            width: 100px;
+            height: 100px;
         }
 
         .wanttogo {
             position: fixed;
-            left: 80px;
-            top: 370px;
+            left: 50px;
+            bottom: 50px;
         }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Destinations</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -74,48 +51,24 @@
 <body>
     <%- include('partials/navbar') %>
 
-
     <div class="container">
-        <h1>Welcome</h1>
+        <h1>Welcome, <%= username %>!</h1>
     </div>
-    <div class="container1">
-        <img id="image" src="/hiking.png" width="100" height="100">
-        <br>
-        <label class="ml-4 my-2">Hiking</label>
-        <br>
-        <button onclick="location.href = '/hiking';" id="hiking" class="btn btn-secondary ml-3"> View </button>
-    </div>
-    <div class="container2">
-        <img id="image" src="/cities.png" width="100" height="100">
-        <br>
-        <label class="ml-4 my-2">Cities</label>
-        <br>
-        <button onclick="location.href = '/cities';" id="cities" class="btn btn-secondary ml-3"> View </button>
-    </div>
-    <div class="container3">
-        <img id="image" src="/islands.png" width="100" height="100">
-        <br>
-        <label class="ml-4 my-2">Islands</label>
-        <br>
-        <button onclick="location.href = '/islands';" id="islands" class="btn btn-secondary ml-3"> View </button>
-    </div>
-    <div class="container4">
-        <img id="image" src="/beaches.png" width="100" height="100">
-        <br>
-        <label class="ml-4 my-2">Beaches</label>
-        <br>
-        <button onclick="location.href = '/beaches';" id="beaches" class="btn btn-secondary ml-3"> View </button>
-    </div>
-    <div class="container5">
-        <img id="image" src="/mountains.png" width="100" height="100">
-        <br>
-        <label class="ml-4 my-2">Mountains</label>
-        <br>
-        <button onclick="location.href = '/mountains';" id="mountains" class="btn btn-secondary ml-3"> View </button>
+
+    <div class="categories-container">
+        <% categories.forEach(function(cat) { %>
+            <div class="category-item">
+                <img src="<%= cat.img %>" alt="<%= cat.name %>">
+                <br>
+                <label class="ml-2 my-2"><%= cat.name %></label>
+                <br>
+                <button type="button" onclick="location.href='<%= cat.route %>';" class="btn btn-secondary mt-2">View</button>
+            </div>
+        <% }); %>
     </div>
 
     <div class="wanttogo">
-        <button onclick="location.href = '/wanttogo';" id="wanttogo" class="btn btn-secondary ml-3" style="width: 300px;">Want-to-Go List</button>
+        <button onclick="location.href='/want-to-go';" class="btn btn-secondary" style="width: 200px;">Want-to-Go List</button>
     </div>
 </body>
 </html>

@@ -1,3 +1,4 @@
+// server.js
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
@@ -7,6 +8,7 @@ const app = express();
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static("public"));
 
 // Sessions
@@ -35,11 +37,10 @@ const authRoutes = require("./routes/auth");
 const homeRoutes = require("./routes/home");
 const destinationRoutes = require("./routes/destination");
 const searchRoutes = require("./routes/search");
-
 app.use("/", authRoutes);
 app.use("/", homeRoutes);
 app.use("/", destinationRoutes);
-app.use("/", searchRoutes);
+app.use("/", searchRoutes)
 
 // Start server after DB connects
 connect().then(() => {

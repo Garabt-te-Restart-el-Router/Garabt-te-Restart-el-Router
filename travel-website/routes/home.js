@@ -4,7 +4,18 @@ const { connect } = require("../database");
 
 // ---------- HOME PAGE ----------
 router.get("/home", (req, res) => {
-    res.render("home", { user: req.session.user });
+    const username = req.session.user.username;
+    
+    // Pass categories dynamically
+    const categories = [
+        { name: "Hiking", img: "/hiking.png", route: "/category/hiking" },
+        { name: "Cities", img: "/cities.png", route: "/category/cities" },
+        { name: "Islands", img: "/islands.png", route: "/category/islands" },
+        { name: "Beaches", img: "/beaches.png", route: "/category/beaches" },
+        { name: "Mountains", img: "/mountains.png", route: "/category/mountains" }
+    ];
+
+    res.render("home", { username, categories });
 });
 
 // ---------- CATEGORY PAGE ----------
