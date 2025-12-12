@@ -56,16 +56,16 @@
     </div>
 
     <div class="categories-container">
-        <% categories.forEach(function(cat) { %>
-            <div class="category-item">
-                <img src="<%= cat.img %>" alt="<%= cat.name %>">
-                <br>
-                <label class="ml-2 my-2"><%= cat.name %></label>
-                <br>
-                <button type="button" onclick="location.href='<%= cat.route %>';" class="btn btn-secondary mt-2">View</button>
-            </div>
-        <% }); %>
-    </div>
+    <% categories.forEach(function(cat) { %>
+        <div class="category-item">
+            <img src="<%= cat.img %>" alt="<%= cat.name %>">
+            <br>
+            <label class="ml-2 my-2"><%= cat.name %></label>
+            <br>
+            <a href="<%= cat.link %>" class="btn btn-secondary mt-2">View</a>
+        </div>
+    <% }); %>
+</div>
 
     <div class="wanttogo">
         <button onclick="location.href='/want-to-go';" class="btn btn-secondary" style="width: 200px;">Want-to-Go List</button>
