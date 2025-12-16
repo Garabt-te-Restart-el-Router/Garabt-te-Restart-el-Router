@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="/css/style.css"> 
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <form action="/search" method="GET" style="display:inline;">
+                <input type="text" name="q" placeholder="Search destinations..." required>
+                <button type="submit">Search</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Search Results</h1>
+
+        <% if (notFound) { %>
+            <div class="no-results">
+                <p>No destinations found matching your search.</p>
+                <a href="/">Go back home</a>
+            </div>
+        <% } else if (results && results.length > 0) { %>
+            <div class="destinations-grid">
+                <% results.forEach(destination => { %>
+                    <div class="card">
+                        <h3><%= destination.name %></h3>
+                        <p><strong>Location:</strong> <%= destination.location || 'Unknown' %></p>
+                        <p><%= destination.description || '' %></p>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p>Please enter a keyword to search.</p>
+        <% } %>
+    </main>
+
+</body>
+</html>
