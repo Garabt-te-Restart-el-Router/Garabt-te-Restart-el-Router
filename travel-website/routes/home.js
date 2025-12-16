@@ -12,7 +12,7 @@ router.get("/home", (req, res) => {
         { name: "Cities", img: "/cities.png", route: "/category/cities" },
         { name: "Islands", img: "/islands.png", route: "/category/islands" },
         { name: "Beaches", img: "/beaches.png", route: "/category/beaches" },
-        { name: "Mountains", img: "/mountains.png", route: "/category/mountains" }
+        { name: "Mountains", img: "/mountains.png", route: "/category/mountains" },
     ];
 
     res.render("home", { username, categories });

@@ -41,35 +41,31 @@
             left: 30px;
             top: 470px;
         }
+        #my {
+            zoom: 110%;
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= destination.name %></title>
+    <title>El Matador</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <%- include('partials/navbar') %>
 
     <div class="container1">
-        <img id="image" src="/<%= destination.name %>.png" width="193" height="300" alt="<%= destination.name %>">
+        <img src="/elmatador.png" width="193" height="300">
     </div>
     <div class="container2">
-        <!-- You can add description text here if you want -->
-        <p><strong>Category:</strong> <%= destination.category %></p>
+        Located in Malibu, California, El Matador State Beach is a stunning, rugged stretch of coastline defined by massive sea stacks, deep caves, and natural rock arches. Accessible only via a steep trail and staircase descending from the bluffs, this secluded beach is famous for its cinematic scenery and tide pools.
     </div>
     <div class="wanttogo">
-        <form method="POST" action="/destination/<%= destination.name %>/add">
+        <form method="POST" action="/destination/elmaltador/add">
             <button type="submit" class="btn btn-secondary ml-3">Add to Want-to-Go List</button>
         </form>
-        <% if (error) { %>
-            <p style="color:red;"><%= error %></p>
-        <% } %>
     </div>
     <div class="video">
-        <!-- Optional video placeholder -->
-        <video width="480" height="360" controls>
-            <source src="/<%= destination.name %>.mp4" type="video/mp4">
-        </video>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/AvvNzjdbRRU?si=GxU-oaSom5fTqpj6" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
     </div>
 </body>
 </html>

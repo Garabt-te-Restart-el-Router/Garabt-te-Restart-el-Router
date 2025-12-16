@@ -7,15 +7,24 @@ router.get("/destination/:name", async (req, res) => {
     try {
         if (!req.session.user) return res.redirect("/login");
 
-        const db = await connect();
-        const destinations = db.collection("destinations");
+        const name = req.params.name.toLowerCase();
 
-        const name = req.params.name;
-        const dest = await destinations.findOne({ name });
+        // Map of valid destinations to their EJS files
+        const pages = {
+            "elmaltador": "elmaltador",
+            "annapurna": "annapurna",
+            "inca": "inca",
+            "paris": "paris",
+            "rome": "rome",
+            "bali": "bali",
+            "santorini": "santorini"
 
-        if (!dest) return res.status(404).send("Destination not found");
+        };
 
-        res.render(name, { error: null });
+        const page = pages[name];
+        if (!page) return res.status(404).send("Destination page not found");
+
+        res.render(page); // renders the specific hard-coded EJS file
     } catch (err) {
         console.error(err);
         res.status(500).send("Server error");
@@ -29,17 +38,20 @@ router.post("/destination/:name/add", async (req, res) => {
 
         const db = await connect();
         const users = db.collection("myCollection");
+
         const username = req.session.user.username;
-        const destName = req.params.name;
+        const destName = req.params.name.toLowerCase();
 
         const user = await users.findOne({ username });
 
         if (user.wantToGo.includes(destName)) {
-            return res.render(destName, { error: "Already in your Want-to-Go list." });
+            return res.render("destination", { destination: { name: destName }, error: "Already in your Want-to-Go list." });
         }
 
         await users.updateOne({ username }, { $push: { wantToGo: destName } });
+
         res.redirect(`/destination/${destName}`);
+
     } catch (err) {
         console.error(err);
         res.status(500).send("Server error");
