@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            background-image: url("/background3.jpg");
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            -webkit-text-stroke: 1px blue;
+        }
+        .container1 {
+            position: fixed;
+            left: 50px;
+            top: 150px;
+            color: white;
+        }
+        .container2 {
+            position: fixed;
+            left: 300px;
+            top: 150px;
+            color: white;
+            width: 300px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        .video {
+            position: fixed;
+            left: 700px;
+            top: 150px;
+            color: white;
+            width: 300px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        .wanttogo {
+            position: fixed;
+            left: 30px;
+            top: 470px;
+        }
+        #my {
+            zoom: 110%;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mount Cook</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+    <div class="container1">
+        <img id="image" src="/cook.png" width="193" height="300">
+    </div>
+    <div class="container2">
+        Soaring as New Zealand's highest peak, Aoraki / Mount Cook anchors the Southern Alps with its jagged, glaciated summit. Sacred to the Ngāi Tahu people, this alpine giant lies within a Dark Sky Reserve and was a training ground for Sir Edmund Hillary. Surrounded by turquoise lakes and ancient ice, it remains a premier destination for adventurers seeking a raw, breathtaking wilderness experience amidst the dramatic landscapes of the South Island.
+    <div class="wanttogo">
+        <form method="POST" action="/destination/cook/add">
+            <button type="submit" class="btn btn-secondary ml-3">Add to Want-to-Go List</button>
+        </form>
+    </div>
+    <div class="video">
+       <iframe width="560" height="315" 
+    src="https://www.youtube.com/embed/-a-mo0dYekw?si=e6cXZ1OXqifhCO9b"
+    title="YouTube video player" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+</iframe>
+    </div>
+
+</body>
+
+</html>
