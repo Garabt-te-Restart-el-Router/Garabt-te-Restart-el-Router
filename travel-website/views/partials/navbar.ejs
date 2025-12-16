@@ -1,15 +1,100 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
-    <a class="navbar-brand" href="/home" style="color: rgb(191, 255, 161)">Travel Website</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <a class="navbar-brand" href="/home">My Travel App</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto"></ul>
-        <form method="GET" action="/search" class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-        <a href="/logout" class="btn btn-danger ml-2">Logout</a>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/home">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/want-to-go">Want-to-Go</a>
+            </li>
+        </ul>
+
+        <div class="form-inline my-2 my-lg-0 ml-auto">
+            
+            <div style="position: relative; margin-right: 15px;">
+                <form action="/search" method="GET" autocomplete="off">
+                    <input 
+                        id="search-input" 
+                        class="form-control mr-sm-2" 
+                        type="search" 
+                        name="q" 
+                        placeholder="Search destinations..." 
+                        aria-label="Search"
+                    >
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+
+                <div id="search-results" class="list-group" 
+                     style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1050; display: none;">
+                    </div>
+            </div>
+
+            <a href="/logout" class="btn btn-danger my-2 my-sm-0">Logout</a>
+        </div>
     </div>
 </nav>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+
+    searchInput.addEventListener('input', async (e) => {
+        const query = e.target.value.trim();
+
+        if (query.length < 1) {
+            searchResults.style.display = 'none';
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        try {
+            // Call the API we created in Step 1
+            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            const data = await res.json();
+
+            searchResults.innerHTML = '';
+
+            if (data.length > 0) {
+                searchResults.style.display = 'block';
+                
+                data.forEach(item => {
+                    // Create the link for the dropdown item
+                    const a = document.createElement('a');
+                    // Ensure you have a route that handles /destination/:id
+                    a.href = `/destination/${item._id}`; 
+                    a.classList.add('list-group-item', 'list-group-item-action');
+                    
+                    // Style matching dark theme (optional)
+                    a.style.backgroundColor = '#343a40';
+                    a.style.color = '#fff';
+                    a.style.borderColor = '#454d55';
+
+                    // Content
+                    a.innerHTML = `
+                        <div style="font-weight: bold;">${item.name}</div>
+                        <small class="text-muted">${item.location || ''}</small>
+                    `;
+                    
+                    searchResults.appendChild(a);
+                });
+            } else {
+                searchResults.style.display = 'none';
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+</script>
