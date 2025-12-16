@@ -20,7 +20,7 @@ router.get("/home", (req, res) => {
 
 // ---------- CATEGORY PAGE ----------
 router.get("/category/:name", async (req, res) => {
-    const category = req.params.name.toLowerCase();
+    const category = req.params.name;
 
     const db = await connect();
     const destinations = db.collection("destinations");

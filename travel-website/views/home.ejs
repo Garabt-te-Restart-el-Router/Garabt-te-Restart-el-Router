@@ -57,15 +57,15 @@
 
     <div class="categories-container">
   <% categories.forEach(function(cat) { %>
-    <div class="category-item">
+    <div class="category-item" style="position: relative; z-index: 10;">
       <img src="<%= cat.img %>" alt="<%= cat.name %>">
       <br>
       <label class="ml-2 my-2"><%= cat.name %></label>
       <br>
-      <!-- Button that actually redirects -->
-      <button type="button"
-              class="btn btn-secondary mt-2"
-              onclick="window.location.href='<%= cat.link %>';">
+      <button
+        type="button"
+        class="btn btn-secondary mt-2"
+        onclick="window.location.href='/category/<%= cat.name.toLowerCase() %>';">
         View
       </button>
     </div>
