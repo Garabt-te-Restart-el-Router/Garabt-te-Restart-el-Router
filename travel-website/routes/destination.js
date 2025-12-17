@@ -29,7 +29,7 @@ router.get("/destination/:name", async (req, res) => {
 
 // ---------- ADD TO WANT-TO-GO ----------
 router.post("/destination/:name/add", async (req, res) => {
-    if (!req.session.user) return res.redirect("/login");
+    if (!req.session.user) return res.status(401).send('Not logged in');
 
     const db = await connect();
     const users = db.collection("myCollection");
@@ -37,12 +37,16 @@ router.post("/destination/:name/add", async (req, res) => {
     const username = req.session.user.username;
     const name = req.params.name.toLowerCase();
 
-    await users.updateOne(
+    const result = await users.updateOne(
         { username },
         { $addToSet: { wantToGo: name } }
     );
 
-    res.redirect(`/destination/${name}`);
+    if (result.modifiedCount === 0) {
+        return res.send('Already in your Want-to-Go');
+    }
+
+    res.send('Added to your Want-to-Go List');
 });
 
 module.exports = router;

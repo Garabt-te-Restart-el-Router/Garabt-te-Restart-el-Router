@@ -46,6 +46,22 @@
         padding: 15px;
         border-radius: 5px;
         }
+
+        #back-btn {
+        position: fixed;
+        bottom: 50px;
+        left: 50px;
+        z-index: 1000;
+        padding: 10px 20px;
+        font-weight: bold;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #back-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,6 +92,7 @@
                 </div>
             <% }) %>
         </div>
-    </div>
+
+<%- include('partials/back-button') %>
 </body>
 </html>

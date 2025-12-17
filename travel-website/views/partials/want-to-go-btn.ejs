@@ -1,0 +1,96 @@
+<div class="wanttogo">
+    <form id="wantForm">
+        <button type="submit" class="btn btn-secondary">Add to Want-to-Go List</button>
+    </form>
+
+    <!-- Feedback message -->
+    <div id="feedback-msg"></div>
+</div>
+
+<script>
+    const form = document.getElementById('wantForm');
+    const feedback = document.getElementById('feedback-msg');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // prevent default redirect
+
+        const url = `/destination/<%= name %>/add`;
+
+        try {
+            const res = await fetch(url, { method: 'POST' });
+            const text = await res.text();
+
+            let msg = 'Added to your Want-to-Go List!';
+            let cls = 'success';
+
+            if (text.includes('Already in your Want-to-Go')) {
+                msg = 'Already in your Want-to-Go List!';
+                cls = 'error';
+            }
+
+            feedback.innerText = msg;
+            feedback.className = `show ${cls}`;
+
+            setTimeout(() => {
+                feedback.className = '';
+            }, 2500);
+
+        } catch (err) {
+            console.error(err);
+            feedback.innerText = 'Error adding destination.';
+            feedback.className = 'show error';
+            setTimeout(() => {
+                feedback.className = '';
+            }, 2500);
+        }
+    });
+</script>
+
+<style>
+    .wanttogo {
+        position: relative;
+        margin-top: 10px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn-secondary {
+        font-weight: bold;
+    }
+
+    #feedback-msg {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-weight: bold;
+        white-space: nowrap;
+        display: none;
+        z-index: 100;
+    }
+
+    #feedback-msg.show {
+        display: block;
+        animation: fadeInOut 2.5s forwards;
+    }
+
+    #feedback-msg.success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    #feedback-msg.error {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    @keyframes fadeInOut {
+        0% { opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+</style>

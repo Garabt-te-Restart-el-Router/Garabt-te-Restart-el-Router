@@ -1,0 +1,25 @@
+<div id="feedback-msg" class="feedback-message"><%= message || "" %></div>
+
+<style>
+.feedback-message {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    text-align: center;
+}
+
+.feedback-message.show {
+    opacity: 1;
+    transform: translateY(-10px);
+}
+
+.feedback-message.success {
+    color: green;
+}
+
+.feedback-message.error {
+    color: red;
+}
+</style>

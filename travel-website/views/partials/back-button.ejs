@@ -1,0 +1,49 @@
+<!-- Back Button Partial -->
+<button id="back-btn" class="btn btn-secondary">Back</button>
+
+<style>
+    #back-btn {
+        position: fixed;
+        bottom: 50px;
+        left: -150px; /* start off-screen */
+        z-index: 1000;
+        padding: 10px 20px;
+        font-weight: bold;
+        background-color: #6c757d; /* grey */
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transition: transform 0.3s ease, left 0.5s ease, opacity 0.5s ease;
+        cursor: pointer;
+    }
+
+    #back-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    #back-btn.show {
+        left: 50px; /* final position */
+        opacity: 1;
+    }
+</style>
+
+<script>
+    function animateBackButton() {
+        const backBtn = document.getElementById('back-btn');
+        if (backBtn) {
+            setTimeout(() => backBtn.classList.add('show'), 50); // slight delay for smooth animation
+        }
+    }
+
+    // Works on initial load and also when navigating back/forward in the browser
+    window.addEventListener('DOMContentLoaded', animateBackButton);
+    window.addEventListener('pageshow', animateBackButton);
+
+    // Go back in browser history
+    document.getElementById('back-btn').addEventListener('click', () => {
+        window.history.back();
+    });
+</script>
