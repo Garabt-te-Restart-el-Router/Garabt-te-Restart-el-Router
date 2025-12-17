@@ -1,6 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        body {
+            background-image: url("/background3.jpg");
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            -webkit-text-stroke: 1px blue;
+            margin-top: 50px;
+        }
+
+        .categories-container {
+            display: flex;         /* arrange items in a row */
+            justify-content: start; /* align items to start */
+            gap: 50px;             /* spacing between items */
+            margin: 50px auto;     /* center container horizontally */
+            padding: 20px;
+            flex-wrap: wrap;       /* wrap to next line if screen is small */
+            max-width: 1200px;
+        }
+
+        .category-item {
+            text-align: center;
+            color: white;
+        }
+
+        .category-item img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .wanttogo {
+            position: fixed;
+            left: 50px;
+            bottom: 50px;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= actualCategoryName %> Destinations</title>
