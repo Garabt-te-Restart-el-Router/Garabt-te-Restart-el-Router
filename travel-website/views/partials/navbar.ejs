@@ -7,7 +7,9 @@
 
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav mr-auto">
-           
+            <li class="nav-item">
+                <a class="nav-link" href="/home">Home</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/want-to-go">Want-to-Go</a>
             </li>
@@ -62,29 +64,29 @@
                 data.forEach(item => {
                     const a = document.createElement('a');
                     
-                    // --- CHANGED THIS LINE ---
-                    // Uses the name (converted to lowercase) instead of ID
+                    // LINK: Uses 'name' (e.g. fuji) for the URL
                     a.href = `/destination/${item.name.toLowerCase()}`; 
                     
                     a.classList.add('list-group-item', 'list-group-item-action');
-                    
-                    // Dark theme styles
                     a.style.backgroundColor = '#343a40';
                     a.style.color = '#fff';
                     a.style.borderColor = '#454d55';
 
+                    // DISPLAY: Uses 'actualName' + 'country' + 'actualCategoryName'
+                    // Example output: "Japan - Mountains"
                     a.innerHTML = `
-                        <div style="font-weight: bold;">${item.name}</div>
-                        <small class="text-muted">${item.location || ''}</small>
+                        <div style="font-weight: bold;">${item.actualName}</div>
+                        <small class="text-muted">
+                            ${item.country || 'Unknown'} - ${item.actualCategoryName || 'General'}
+                        </small>
                     `;
                     searchResults.appendChild(a);
                 });
             } else {
-                // No results found message
                 const div = document.createElement('div');
                 div.classList.add('list-group-item');
                 div.style.backgroundColor = '#343a40';
-                div.style.color = '#dc3545'; // Red text
+                div.style.color = '#dc3545';
                 div.style.borderColor = '#454d55';
                 div.innerText = 'Destination not Found';
                 
@@ -95,7 +97,6 @@
         }
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
             searchResults.style.display = 'none';
