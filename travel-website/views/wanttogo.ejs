@@ -12,16 +12,93 @@
             color: white;
             text-align: center;
             -webkit-text-stroke: 1px blue;
+            margin-top: 40px;
+        }
+
+        .card-body {
+            background-color: #e0e0e0;
+            text-align: center;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 40px;
         }
     </style>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Want-to-Go List</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
+
 <body>
     <%- include('partials/navbar') %>
+
+    <h1>Your Want-To-Go List</h1>
+
+    <div class="container mt-4">
+        <div class="row">
+
+            <% if (!destinations || destinations.length === 0) { %>
+                <p class="text-white">Your Want-to-Go list is empty.</p>
+            <% } %>
+
+            <% destinations.forEach(dest => { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+
+                        <!-- Image uses internal name -->
+                        <img src="/<%= dest.name %>.png"
+                             class="card-img-top"
+                             alt="<%= dest.actualName %>">
+
+                        <div class="card-body">
+                            <h5 class="card-title"><%= dest.actualName %></h5>
+
+                            <p class="card-text">
+                                <%= dest.country %> · <%= dest.actualCategoryName %>
+                            </p>
+
+                            <!-- BUTTON (not <a>) -->
+                            <button class="btn btn-primary"
+                                    onclick="window.location.href='/destination/<%= dest.name %>'">
+                                View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination-container">
+
+            <% if (currentPage > 1) { %>
+                <button class="btn btn-secondary mr-2"
+                        onclick="window.location.href='/want-to-go?page=<%= currentPage - 1 %>'">
+                    Previous
+                </button>
+            <% } %>
+
+            <span class="text-white align-self-center">
+                Page <%= currentPage %> of <%= totalPages %>
+            </span>
+
+            <% if (currentPage < totalPages) { %>
+                <button class="btn btn-secondary ml-2"
+                        onclick="window.location.href='/want-to-go?page=<%= currentPage + 1 %>'">
+                    Next
+                </button>
+            <% } %>
+
+        </div>
+    </div>
+
 </body>
 </html>

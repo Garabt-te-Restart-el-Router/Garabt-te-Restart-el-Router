@@ -38,28 +38,38 @@ router.get("/category/:name", async (req, res) => {
 
 // ---------- WANT-TO-GO LIST ----------
 router.get("/want-to-go", async (req, res) => {
-    try {
-        if (!req.session.user) return res.redirect("/login");
+    const db = await connect();
+    const users = db.collection("myCollection");
+    const destinationsCol = db.collection("destinations");
 
-        const db = await connect();
-        const users = db.collection("myCollection");
-        const destinationsCol = db.collection("destinations");
+    const username = req.session.user.username;
 
-        const user = await users.findOne({
-            username: req.session.user.username
-        });
+    // pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = 3;
+    const skip = (page - 1) * limit;
 
-        // Get full destination objects
-        const destinations = await destinationsCol
-            .find({ name: { $in: user.wantToGo } })
-            .toArray();
+    const user = await users.findOne({ username });
 
-        res.render("wantToGo", { destinations });
+    // get destination objects
+    const destinations = await destinationsCol.find({
+        name: { $in: user.wantToGo }
+    })
+    .skip(skip)
+    .limit(limit)
+    .toArray();
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Server error");
-    }
+    const total = await destinationsCol.countDocuments({
+        name: { $in: user.wantToGo }
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.render("wantToGo", {
+        destinations,
+        currentPage: page,
+        totalPages
+    });
 });
 
 module.exports = router;
