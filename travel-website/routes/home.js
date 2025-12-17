@@ -72,4 +72,30 @@ router.get("/want-to-go", async (req, res) => {
     });
 });
 
+
+// ---------- REMOVE FROM WANT-TO-GO ----------
+router.post("/destination/:name/remove", async (req, res) => {
+    try {
+        if (!req.session.user) return res.redirect("/login");
+
+        const db = await connect();
+        const users = db.collection("myCollection");
+
+        const username = req.session.user.username;
+        const destName = req.params.name.toLowerCase().trim();
+
+        await users.updateOne(
+            { username },
+            { $pull: { wantToGo: destName } }
+        );
+
+        res.redirect("/want-to-go");
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server error");
+    }
+});
+
+
 module.exports = router;

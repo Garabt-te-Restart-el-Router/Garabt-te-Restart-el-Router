@@ -26,6 +26,37 @@
             margin-top: 30px;
             margin-bottom: 40px;
         }
+
+        /* Empty state styling */
+        .empty-state {
+            text-align: center;
+            margin-top: 120px;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        .empty-state h2 {
+            color: #ff4d4d;
+            font-size: 2.8rem;
+            font-weight: bold;
+        }
+
+        .empty-state p {
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
+
+        .browse-btn {
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 
     <meta charset="UTF-8">
@@ -45,7 +76,13 @@
         <div class="row">
 
             <% if (!destinations || destinations.length === 0) { %>
-                <p class="text-white">Your Want-to-Go list is empty.</p>
+                <div class="empty-state col-12">
+                    <h2>Your Want-to-Go list is empty</h2>
+                    <p>Start exploring destinations and add places you’d love to visit 🌍</p>
+                    <button class="btn btn-success browse-btn" onclick="window.location.href='/home'">
+                        Browse Destinations
+                    </button>
+                </div>
             <% } %>
 
             <% destinations.forEach(dest => { %>
@@ -64,11 +101,20 @@
                                 <%= dest.country %> · <%= dest.actualCategoryName %>
                             </p>
 
-                            <!-- BUTTON (not <a>) -->
-                            <button class="btn btn-primary"
-                                    onclick="window.location.href='/destination/<%= dest.name %>'">
-                                View
-                            </button>
+                            <div class="d-flex justify-content-center gap-2">
+                                <button class="btn btn-primary mr-2"
+                                        onclick="window.location.href='/destination/<%= dest.name %>'">
+                                    View
+                                </button>
+
+                                <form method="POST"
+                                    action="/destination/<%= dest.name %>/remove"
+                                    style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">
+                                        Remove
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -77,6 +123,7 @@
         </div>
 
         <!-- PAGINATION -->
+        <% if (destinations && destinations.length > 0 && totalPages > 0) { %>
         <div class="pagination-container">
 
             <% if (currentPage > 1) { %>
@@ -98,7 +145,8 @@
             <% } %>
 
         </div>
-    </div>
+        <% } %>
 
+    </div>
 </body>
 </html>
