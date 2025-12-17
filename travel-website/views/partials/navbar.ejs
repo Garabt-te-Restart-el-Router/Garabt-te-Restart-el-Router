@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <a class="navbar-brand" href="/home">My Travel App</a>
+    <a class="navbar-brand lively" href="/home">My Travel App</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
         <span class="navbar-toggler-icon"></span>
@@ -8,15 +8,11 @@
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/home">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/want-to-go">Want-to-Go</a>
+                <a class="nav-link lively" href="/want-to-go">Want-to-Go</a>
             </li>
         </ul>
 
         <div class="form-inline my-2 my-lg-0 ml-auto">
-            
             <div style="position: relative; margin-right: 15px;">
                 <form action="/search" method="GET" autocomplete="off">
                     <input 
@@ -39,6 +35,38 @@
         </div>
     </div>
 </nav>
+
+<style>
+/* --- Lively navbar elements --- */
+.lively {
+    position: relative;
+    transition: transform 0.3s ease, color 0.3s ease;
+    font-weight: bold;
+    color: #fff; /* default color */
+}
+
+/* Enlarge text on hover */
+.lively:hover {
+    transform: scale(1.1);
+    color: #28a745 !important; /* optional: change color on hover */
+}
+
+/* Optional: subtle underline effect */
+.lively::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0;
+    height: 2px;
+    background-color: #28a745;
+    transition: width 0.3s ease;
+}
+
+.lively:hover::after {
+    width: 100%;
+}
+</style>
 
 <script>
     const searchInput = document.getElementById('search-input');
