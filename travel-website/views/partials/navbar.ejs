@@ -47,7 +47,6 @@
     searchInput.addEventListener('input', async (e) => {
         const query = e.target.value.trim();
 
-        // 1. If empty, hide everything
         if (query.length < 1) {
             searchResults.style.display = 'none';
             searchResults.innerHTML = '';
@@ -58,15 +57,17 @@
             const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
 
-            // Clear previous results
             searchResults.innerHTML = '';
-            searchResults.style.display = 'block'; // Always show container if we typed something
+            searchResults.style.display = 'block';
 
-            // 2. Check if we have results
             if (data.length > 0) {
                 data.forEach(item => {
                     const a = document.createElement('a');
-                    a.href = `/destination/${item._id}`; 
+                    
+                    // --- CHANGED THIS LINE ---
+                    // Uses the name (converted to lowercase) instead of ID
+                    a.href = `/destination/${item.name.toLowerCase()}`; 
+                    
                     a.classList.add('list-group-item', 'list-group-item-action');
                     
                     // Dark theme styles
@@ -81,13 +82,11 @@
                     searchResults.appendChild(a);
                 });
             } else {
-                // 3. NO RESULTS FOUND -> Show Error Message
+                // No results found message
                 const div = document.createElement('div');
-                div.classList.add('list-group-item'); // Bootstrap class for consistency
-                
-                // Style for Error Message (Red text, dark background)
+                div.classList.add('list-group-item');
                 div.style.backgroundColor = '#343a40';
-                div.style.color = '#dc3545'; // Bootstrap 'danger' red
+                div.style.color = '#dc3545'; // Red text
                 div.style.borderColor = '#454d55';
                 div.innerText = 'Destination not Found';
                 
