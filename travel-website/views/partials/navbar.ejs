@@ -32,7 +32,7 @@
 
                 <div id="search-results" class="list-group" 
                      style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1050; display: none;">
-                    </div>
+                </div>
             </div>
 
             <a href="/logout" class="btn btn-danger my-2 my-sm-0">Logout</a>
@@ -47,6 +47,7 @@
     searchInput.addEventListener('input', async (e) => {
         const query = e.target.value.trim();
 
+        // 1. If empty, hide everything
         if (query.length < 1) {
             searchResults.style.display = 'none';
             searchResults.innerHTML = '';
@@ -54,37 +55,43 @@
         }
 
         try {
-            // Call the API we created in Step 1
             const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
             const data = await res.json();
 
+            // Clear previous results
             searchResults.innerHTML = '';
+            searchResults.style.display = 'block'; // Always show container if we typed something
 
+            // 2. Check if we have results
             if (data.length > 0) {
-                searchResults.style.display = 'block';
-                
                 data.forEach(item => {
-                    // Create the link for the dropdown item
                     const a = document.createElement('a');
-                    // Ensure you have a route that handles /destination/:id
                     a.href = `/destination/${item._id}`; 
                     a.classList.add('list-group-item', 'list-group-item-action');
                     
-                    // Style matching dark theme (optional)
+                    // Dark theme styles
                     a.style.backgroundColor = '#343a40';
                     a.style.color = '#fff';
                     a.style.borderColor = '#454d55';
 
-                    // Content
                     a.innerHTML = `
                         <div style="font-weight: bold;">${item.name}</div>
                         <small class="text-muted">${item.location || ''}</small>
                     `;
-                    
                     searchResults.appendChild(a);
                 });
             } else {
-                searchResults.style.display = 'none';
+                // 3. NO RESULTS FOUND -> Show Error Message
+                const div = document.createElement('div');
+                div.classList.add('list-group-item'); // Bootstrap class for consistency
+                
+                // Style for Error Message (Red text, dark background)
+                div.style.backgroundColor = '#343a40';
+                div.style.color = '#dc3545'; // Bootstrap 'danger' red
+                div.style.borderColor = '#454d55';
+                div.innerText = 'Destination not Found';
+                
+                searchResults.appendChild(div);
             }
         } catch (err) {
             console.error(err);

@@ -1,45 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> <style>
+        body {
+            background-image: url("/background3.jpg");
+            background-repeat: no-repeat;
+            background-size: 100%;
+            /* Added lines below to remove top whitespace */
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            -webkit-text-stroke: 1px blue;
+            margin-top: 50px;
+        }
+
+        .categories-container {
+            display: flex;
+            justify-content: start;
+            gap: 50px;
+            margin: 50px auto;
+            padding: 20px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+        }
+
+        .category-item {
+            text-align: center;
+            color: white;
+        }
+
+        .category-item img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .wanttogo {
+            position: fixed;
+            left: 50px;
+            bottom: 50px;
+        }
+        
+        /* Optional: Ensure the navbar sits flush */
+        nav.navbar {
+            margin-top: 0 !important;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
-    <link rel="stylesheet" href="/css/style.css"> 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-
-    <header>
-        <nav>
-            <a href="/">Home</a>
-            <form action="/search" method="GET" style="display:inline;">
-                <input type="text" name="q" placeholder="Search destinations..." required>
-                <button type="submit">Search</button>
-            </form>
-        </nav>
-    </header>
-
+    <%- include('partials/navbar') %>
     <main>
         <h1>Search Results</h1>
 
-        <% if (notFound) { %>
-            <div class="no-results">
+        <% if (locals.notFound || (locals.results && results.length === 0)) { %>
+            <div class="no-results" style="text-align: center; color: white; margin-top: 50px;">
                 <p>No destinations found matching your search.</p>
-                <a href="/">Go back home</a>
+                <a href="/home" class="btn btn-primary">Go back home</a>
             </div>
-        <% } else if (results && results.length > 0) { %>
-            <div class="destinations-grid">
+        <% } else if (locals.results && results.length > 0) { %>
+            <div class="destinations-grid container">
+                <div class="row">
                 <% results.forEach(destination => { %>
-                    <div class="card">
-                        <h3><%= destination.name %></h3>
-                        <p><strong>Location:</strong> <%= destination.location || 'Unknown' %></p>
-                        <p><%= destination.description || '' %></p>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="card-title"><%= destination.name %></h3>
+                                <p class="card-text"><strong>Location:</strong> <%= destination.location || 'Unknown' %></p>
+                                <p class="card-text"><%= destination.description || '' %></p>
+                                <a href="/destination/<%= destination._id %>" class="btn btn-secondary">View Details</a>
+                            </div>
+                        </div>
                     </div>
                 <% }) %>
+                </div>
             </div>
         <% } else { %>
-            <p>Please enter a keyword to search.</p>
+            <p style="text-align: center; color: white;">Please enter a keyword to search.</p>
         <% } %>
     </main>
-
 </body>
 </html>
