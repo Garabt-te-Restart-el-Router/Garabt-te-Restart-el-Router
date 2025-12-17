@@ -25,7 +25,6 @@ h1 {
     text-align: center;
     margin-top: 120px;
 }
-
 .empty-state h2 {
     color: #ff4d4d;
     font-size: 2.8rem;
@@ -33,7 +32,6 @@ h1 {
     opacity: 0;
     animation: fadeIn 1.5s forwards;
 }
-
 .empty-state p {
     color: white;
     font-size: 1.2rem;
@@ -42,7 +40,6 @@ h1 {
     animation: fadeIn 1.5s forwards;
     animation-delay: 0.5s;
 }
-
 .browse-btn {
     margin-top: 20px;
     font-size: 1.1rem;
@@ -104,8 +101,7 @@ h1 {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Want-to-Go List</title>
-<link rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -147,7 +143,9 @@ h1 {
     const toastText = document.getElementById('toast-text');
     const undoBtn = document.getElementById('undo-btn');
 
-    renderCards(<%- JSON.stringify(destinations) %>);
+    let currentDestinations = <%- JSON.stringify(destinations) %>;
+
+    renderCards(currentDestinations);
     updatePagination();
 
     prevBtn.onclick = () => loadPage(currentPage - 1);
@@ -161,15 +159,16 @@ h1 {
 
         currentPage = data.currentPage;
         totalPages = data.totalPages;
+        currentDestinations = data.destinations;
 
-        renderCards(data.destinations);
+        renderCards(currentDestinations);
         updatePagination();
     }
 
     function renderCards(destinations) {
         cardsContainer.innerHTML = '';
 
-        if (destinations.length === 0) {
+        if (!destinations || destinations.length === 0) {
             pagination.style.display = 'none';
             cardsContainer.innerHTML = `
             <div class="empty-state col-12">
@@ -183,11 +182,12 @@ h1 {
             return;
         }
 
-        destinations.forEach(dest => {
+        destinations.forEach((dest, index) => {
             cardsContainer.insertAdjacentHTML('beforeend', `
             <div class="col-md-4 mb-4 destination-card"
                  data-name="${dest.name}"
-                 data-actual-name="${dest.actualName}">
+                 data-actual-name="${dest.actualName}"
+                 data-index="${index}">
                 <div class="card">
                     <img src="/${dest.name}.png" class="card-img-top">
                     <div class="card-body">
@@ -200,7 +200,8 @@ h1 {
                             </button>
                             <button class="btn btn-danger remove-btn"
                                     data-name="${dest.name}"
-                                    data-actual-name="${dest.actualName}">
+                                    data-actual-name="${dest.actualName}"
+                                    data-index="${index}">
                                 Remove
                             </button>
                         </div>
@@ -216,11 +217,13 @@ h1 {
         document.querySelectorAll('.remove-btn').forEach(btn => {
             btn.onclick = async () => {
                 const card = btn.closest('.destination-card');
+                const index = parseInt(btn.dataset.index);
 
                 lastRemoved = {
                     name: btn.dataset.name,
                     actualName: btn.dataset.actualName,
-                    card
+                    card,
+                    index
                 };
 
                 await fetch(`/destination/${lastRemoved.name}/remove`, { method: 'POST' });
@@ -229,8 +232,12 @@ h1 {
 
                 setTimeout(() => {
                     card.remove();
-                    if (!document.querySelector('.destination-card')) {
+                    currentDestinations.splice(index, 1);
+                    if (currentDestinations.length === 0) {
                         loadPage(Math.max(1, currentPage - 1));
+                    } else {
+                        renderCards(currentDestinations);
+                        updatePagination();
                     }
                 }, 350);
 
@@ -242,10 +249,32 @@ h1 {
     undoBtn.onclick = async () => {
         if (!lastRemoved) return;
 
+        // Remove empty state if visible
+        const emptyState = document.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+
         await fetch(`/destination/${lastRemoved.name}/add`, { method: 'POST' });
+
+        // Restore card in correct position
         lastRemoved.card.classList.remove('removing');
-        cardsContainer.prepend(lastRemoved.card);
+        const refCard = cardsContainer.children[lastRemoved.index];
+        if (refCard) {
+            cardsContainer.insertBefore(lastRemoved.card, refCard);
+            currentDestinations.splice(lastRemoved.index, 0, {
+                name: lastRemoved.name,
+                actualName: lastRemoved.actualName
+            });
+        } else {
+            cardsContainer.appendChild(lastRemoved.card);
+            currentDestinations.push({
+                name: lastRemoved.name,
+                actualName: lastRemoved.actualName
+            });
+        }
+
         hideToast();
+        renderCards(currentDestinations);
+        updatePagination();
     };
 
     function showToast(msg) {
