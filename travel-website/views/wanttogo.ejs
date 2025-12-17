@@ -27,9 +27,12 @@
             margin-bottom: 40px;
         }
 
+        /* Empty state styling */
         .empty-state {
             text-align: center;
             margin-top: 120px;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
         }
 
         .empty-state h2 {
@@ -42,6 +45,17 @@
             color: white;
             font-size: 1.2rem;
             margin-top: 15px;
+        }
+
+        .browse-btn {
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 
@@ -62,13 +76,14 @@
         <div class="row">
 
             <% if (!destinations || destinations.length === 0) { %>
-    <div class="empty-state col-12">
-        <h2>Your Want-to-Go list is empty</h2>
-        <p>
-            Start exploring destinations and add places you’d love to visit 🌍
-        </p>
-    </div>
-<% } %>
+                <div class="empty-state col-12">
+                    <h2>Your Want-to-Go list is empty</h2>
+                    <p>Start exploring destinations and add places you’d love to visit 🌍</p>
+                    <button class="btn btn-success browse-btn" onclick="window.location.href='/home'">
+                        Browse Destinations
+                    </button>
+                </div>
+            <% } %>
 
             <% destinations.forEach(dest => { %>
                 <div class="col-md-4 mb-4">
@@ -86,21 +101,20 @@
                                 <%= dest.country %> · <%= dest.actualCategoryName %>
                             </p>
 
-                            
                             <div class="d-flex justify-content-center gap-2">
-                            <button class="btn btn-primary mr-2"
-                                    onclick="window.location.href='/destination/<%= dest.name %>'">
-                                View
-                            </button>
-
-                            <form method="POST"
-                                action="/destination/<%= dest.name %>/remove"
-                                style="display:inline;">
-                                <button type="submit" class="btn btn-danger">
-                                    Remove
+                                <button class="btn btn-primary mr-2"
+                                        onclick="window.location.href='/destination/<%= dest.name %>'">
+                                    View
                                 </button>
-                            </form>
-                        </div>
+
+                                <form method="POST"
+                                    action="/destination/<%= dest.name %>/remove"
+                                    style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">
+                                        Remove
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -110,30 +124,29 @@
 
         <!-- PAGINATION -->
         <% if (destinations && destinations.length > 0 && totalPages > 0) { %>
-    <div class="pagination-container">
+        <div class="pagination-container">
 
-        <% if (currentPage > 1) { %>
-            <button class="btn btn-secondary mr-2"
-                    onclick="window.location.href='/want-to-go?page=<%= currentPage - 1 %>'">
-                Previous
-            </button>
-        <% } %>
+            <% if (currentPage > 1) { %>
+                <button class="btn btn-secondary mr-2"
+                        onclick="window.location.href='/want-to-go?page=<%= currentPage - 1 %>'">
+                    Previous
+                </button>
+            <% } %>
 
-        <span class="text-white align-self-center">
-            Page <%= currentPage %> of <%= totalPages %>
-        </span>
+            <span class="text-white align-self-center">
+                Page <%= currentPage %> of <%= totalPages %>
+            </span>
 
-        <% if (currentPage < totalPages) { %>
-            <button class="btn btn-secondary ml-2"
-                    onclick="window.location.href='/want-to-go?page=<%= currentPage + 1 %>'">
-                Next
-            </button>
+            <% if (currentPage < totalPages) { %>
+                <button class="btn btn-secondary ml-2"
+                        onclick="window.location.href='/want-to-go?page=<%= currentPage + 1 %>'">
+                    Next
+                </button>
+            <% } %>
+
+        </div>
         <% } %>
 
     </div>
-<% } %>
-
-    </div>
-
 </body>
 </html>
