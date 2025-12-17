@@ -18,9 +18,12 @@ router.get("/destination/:name", async (req, res) => {
         return res.status(404).send("Destination not found in database");
     }
 
-    // 2️⃣ Render the EJS file with the SAME NAME
-    // e.g. "paris" → paris.ejs
-    res.render(name);
+
+    res.render(name, {
+        name: destination.name,
+        actualName: destination.actualName || name, //fallback
+        category: destination.category
+    });
 });
 
 
