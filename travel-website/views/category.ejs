@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= category %> Destinations</title>
+    <title><%= actualCategoryName %> Destinations</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <%- include('partials/navbar') %>
 
     <div class="container mt-4">
-        <h1><%= category %> Destinations</h1>
+        <h1><%= actualCategoryName %> Destinations</h1>
         <div class="row">
             <% if (destinations.length === 0) { %>
                 <p>No destinations found in this category.</p>
@@ -18,9 +18,12 @@
             <% destinations.forEach(dest => { %>
                 <div class="col-md-4 mb-3">
                     <div class="card">
-                        <img src="/<%= dest.name %>.png" class="card-img-top" alt="<%= dest.name %>">
+                        <!-- Image uses internal name -->
+                        <img src="/<%= dest.name %>.png" class="card-img-top" alt="<%= dest.actualName %>">
                         <div class="card-body">
-                            <h5 class="card-title"><%= dest.name %></h5>
+                            <!-- Display actual destination name and country -->
+                            <h5 class="card-title"><%= dest.actualName %></h5>
+                            <p class="card-text"><%= dest.country %></p>
                             <a href="/destination/<%= dest.name %>" class="btn btn-primary">View</a>
                         </div>
                     </div>

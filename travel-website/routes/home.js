@@ -27,8 +27,11 @@ router.get("/category/:name", async (req, res) => {
 
     const list = await destinations.find({ category }).toArray();
 
+    const actualCategoryName = list.length > 0 ? list[0].actualCategoryName : category;
+
     res.render("category", {
         category,
+        actualCategoryName,
         destinations: list
     });
 });
