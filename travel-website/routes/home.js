@@ -43,15 +43,12 @@ router.get("/want-to-go", async (req, res) => {
     const destinationsCol = db.collection("destinations");
 
     const username = req.session.user.username;
-
-    // pagination
     const page = parseInt(req.query.page) || 1;
     const limit = 3;
     const skip = (page - 1) * limit;
 
     const user = await users.findOne({ username });
 
-    // get destination objects
     const destinations = await destinationsCol.find({
         name: { $in: user.wantToGo }
     })
@@ -62,14 +59,25 @@ router.get("/want-to-go", async (req, res) => {
     const total = await destinationsCol.countDocuments({
         name: { $in: user.wantToGo }
     });
-
     const totalPages = Math.ceil(total / limit);
 
-    res.render("wantToGo", {
-        destinations,
-        currentPage: page,
-        totalPages
-    });
+    if (req.query.ajax) {
+        // return just the first destination of the next page
+        res.json({ 
+            destinations: destinations.map(d => ({
+                name: d.name,
+                actualName: d.actualName,
+                country: d.country,
+                actualCategoryName: d.actualCategoryName
+            })) 
+        });
+    } else {
+        res.render("wantToGo", {
+            destinations,
+            currentPage: page,
+            totalPages
+        });
+    }
 });
 
 

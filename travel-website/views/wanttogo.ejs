@@ -1,159 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style>
-        body {
-            background-image: url("/background3.jpg");
-            background-repeat: no-repeat;
-            background-size: 100%;
-        }
+<style>
+body {
+    background-image: url("/background3.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
 
-        h1 {
-            color: white;
-            text-align: center;
-            -webkit-text-stroke: 1px blue;
-            margin-top: 40px;
-        }
+h1 {
+    color: white;
+    text-align: center;
+    -webkit-text-stroke: 1px blue;
+    margin-top: 40px;
+}
 
-        .card-body {
-            background-color: #e0e0e0;
-            text-align: center;
-        }
+.card-body {
+    background-color: #e0e0e0;
+    text-align: center;
+}
 
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-            margin-bottom: 40px;
-        }
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    margin-top: 120px;
+}
 
-        /* Empty state styling */
-        .empty-state {
-            text-align: center;
-            margin-top: 120px;
-        }
+.empty-state h2 {
+    color: #ff4d4d;
+    font-size: 2.8rem;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+}
 
-        .empty-state h2 {
-            color: #ff4d4d;
-            font-size: 2.8rem;
-            font-weight: bold;
-            opacity: 0;
-            animation: fadeIn 1.5s forwards;
-        }
+.empty-state p {
+    color: white;
+    font-size: 1.2rem;
+    margin-top: 15px;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+    animation-delay: 0.5s;
+}
 
-        .empty-state p {
-            color: white;
-            font-size: 1.2rem;
-            margin-top: 15px;
-            opacity: 0;
-            animation: fadeIn 1.5s forwards;
-            animation-delay: 0.5s;
-        }
+.browse-btn {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+    animation-delay: 1s;
+}
 
-        .browse-btn {
-            margin-top: 20px;
-            font-size: 1.1rem;
-            opacity: 0;
-            animation: fadeIn 1.5s forwards;
-            animation-delay: 1s;
-        }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        /* Fade-in animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+/* CARD REMOVE ANIMATION */
+.destination-card {
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.destination-card.removing {
+    opacity: 0;
+    transform: translateX(-40px);
+}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Want-to-Go List</title>
+/* PAGINATION */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0 40px;
+}
 
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+/* TOAST */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #333;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 8px;
+    display: flex;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.toast button {
+    background: none;
+    border: none;
+    color: #4da6ff;
+    font-weight: bold;
+    cursor: pointer;
+}
+</style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Want-to-Go List</title>
+<link rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
 <body>
-    <%- include('partials/navbar') %>
+<%- include('partials/navbar') %>
 
-    <h1>Your Want-To-Go List</h1>
+<h1>Your Want-To-Go List</h1>
 
-    <div class="container mt-4">
-        <div class="row">
+<div class="container mt-4">
+    <div class="row" id="cards-container"></div>
 
-            <% if (!destinations || destinations.length === 0) { %>
-                <div class="empty-state col-12">
-                    <h2>Your Want-to-Go list is empty</h2>
-                    <p>Start exploring destinations and add places you’d love to visit 🌍</p>
-                    <button class="btn btn-success browse-btn" onclick="window.location.href='/home'">
-                        Browse Destinations
-                    </button>
-                </div>
+    <div class="pagination-container" id="pagination">
+        <button class="btn btn-secondary mr-2" id="prev-btn">Previous</button>
+        <span class="text-white align-self-center" id="page-indicator"></span>
+        <button class="btn btn-secondary ml-2" id="next-btn">Next</button>
+    </div>
+</div>
 
-            <% } %>
+<!-- TOAST -->
+<div class="toast" id="toast">
+    <span id="toast-text"></span>
+    <button id="undo-btn">UNDO</button>
+</div>
 
-            <% destinations.forEach(dest => { %>
-                <div class="col-md-4 mb-4">
-                    <div class="card">
+<%- include('partials/back-button') %>
 
-                        <img src="/<%= dest.name %>.png"
-                             class="card-img-top"
-                             alt="<%= dest.actualName %>">
+<script>
+(() => {
+    let currentPage = <%= currentPage %>;
+    let totalPages = <%= totalPages %>;
+    let lastRemoved = null;
+    let undoTimer = null;
 
-                        <div class="card-body">
-                            <h5 class="card-title"><%= dest.actualName %></h5>
+    const cardsContainer = document.getElementById('cards-container');
+    const pagination = document.getElementById('pagination');
+    const pageIndicator = document.getElementById('page-indicator');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    const undoBtn = document.getElementById('undo-btn');
 
-                            <p class="card-text">
-                                <%= dest.country %> · <%= dest.actualCategoryName %>
-                            </p>
+    renderCards(<%- JSON.stringify(destinations) %>);
+    updatePagination();
 
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-primary mr-2"
-                                        onclick="window.location.href='/destination/<%= dest.name %>'">
-                                    View
-                                </button>
+    prevBtn.onclick = () => loadPage(currentPage - 1);
+    nextBtn.onclick = () => loadPage(currentPage + 1);
 
-                                <form method="POST"
-                                    action="/destination/<%= dest.name %>/remove"
-                                    style="display:inline;">
-                                    <button type="submit" class="btn btn-danger">
-                                        Remove
-                                    </button>
-                                </form>
-                            </div>
+    async function loadPage(page) {
+        if (page < 1 || page > totalPages) return;
+
+        const res = await fetch(`/want-to-go?page=${page}&ajax=true`);
+        const data = await res.json();
+
+        currentPage = data.currentPage;
+        totalPages = data.totalPages;
+
+        renderCards(data.destinations);
+        updatePagination();
+    }
+
+    function renderCards(destinations) {
+        cardsContainer.innerHTML = '';
+
+        if (destinations.length === 0) {
+            pagination.style.display = 'none';
+            cardsContainer.innerHTML = `
+            <div class="empty-state col-12">
+                <h2>Your Want-to-Go list is empty</h2>
+                <p>Start exploring destinations and add places you’d love to visit 🌍</p>
+                <button class="btn btn-success browse-btn"
+                        onclick="window.location.href='/home'">
+                    Browse Destinations
+                </button>
+            </div>`;
+            return;
+        }
+
+        destinations.forEach(dest => {
+            cardsContainer.insertAdjacentHTML('beforeend', `
+            <div class="col-md-4 mb-4 destination-card"
+                 data-name="${dest.name}"
+                 data-actual-name="${dest.actualName}">
+                <div class="card">
+                    <img src="/${dest.name}.png" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">${dest.actualName}</h5>
+                        <p>${dest.country} · ${dest.actualCategoryName}</p>
+                        <div class="d-flex justify-content-center">
+                            <button class="btn btn-primary mr-2"
+                                    onclick="window.location.href='/destination/${dest.name}'">
+                                View
+                            </button>
+                            <button class="btn btn-danger remove-btn"
+                                    data-name="${dest.name}"
+                                    data-actual-name="${dest.actualName}">
+                                Remove
+                            </button>
                         </div>
                     </div>
                 </div>
-            <% }) %>
+            </div>`);
+        });
 
-        </div>
+        bindRemoveButtons();
+    }
 
-        <!-- PAGINATION -->
-        <% if (destinations && destinations.length > 0 && totalPages > 0) { %>
-        <div class="pagination-container">
+    function bindRemoveButtons() {
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.onclick = async () => {
+                const card = btn.closest('.destination-card');
 
-            <% if (currentPage > 1) { %>
-                <button class="btn btn-secondary mr-2"
-                        onclick="window.location.href='/want-to-go?page=<%= currentPage - 1 %>'">
-                    Previous
-                </button>
-            <% } %>
+                lastRemoved = {
+                    name: btn.dataset.name,
+                    actualName: btn.dataset.actualName,
+                    card
+                };
 
-            <span class="text-white align-self-center">
-                Page <%= currentPage %> of <%= totalPages %>
-            </span>
+                await fetch(`/destination/${lastRemoved.name}/remove`, { method: 'POST' });
 
-            <% if (currentPage < totalPages) { %>
-                <button class="btn btn-secondary ml-2"
-                        onclick="window.location.href='/want-to-go?page=<%= currentPage + 1 %>'">
-                    Next
-                </button>
-            <% } %>
+                card.classList.add('removing');
 
-        </div>
-        <% } %>
+                setTimeout(() => {
+                    card.remove();
+                    if (!document.querySelector('.destination-card')) {
+                        loadPage(Math.max(1, currentPage - 1));
+                    }
+                }, 350);
 
-    </div>
-    <%- include('partials/back-button') %>
+                showToast(`Removed "${lastRemoved.actualName}"`);
+            };
+        });
+    }
+
+    undoBtn.onclick = async () => {
+        if (!lastRemoved) return;
+
+        await fetch(`/destination/${lastRemoved.name}/add`, { method: 'POST' });
+        lastRemoved.card.classList.remove('removing');
+        cardsContainer.prepend(lastRemoved.card);
+        hideToast();
+    };
+
+    function showToast(msg) {
+        toastText.innerText = msg;
+        toast.classList.add('show');
+        clearTimeout(undoTimer);
+        undoTimer = setTimeout(hideToast, 5000);
+    }
+
+    function hideToast() {
+        toast.classList.remove('show');
+        lastRemoved = null;
+    }
+
+    function updatePagination() {
+        if (totalPages <= 1) {
+            pagination.style.display = 'none';
+            return;
+        }
+
+        pagination.style.display = 'flex';
+        pageIndicator.innerText = `Page ${currentPage} of ${totalPages}`;
+        prevBtn.style.display = currentPage > 1 ? 'inline-block' : 'none';
+        nextBtn.style.display = currentPage < totalPages ? 'inline-block' : 'none';
+    }
+})();
+</script>
 </body>
 </html>
