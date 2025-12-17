@@ -44,8 +44,8 @@
         /* Feedback message overlay */
         #feedback-msg {
             position: absolute;
-            top: 50px; /* distance from button */
-            left: 50%;
+            top: 45px; /* distance from button */
+            left: 70%;
             transform: translateX(-50%);
             padding: 8px 12px;
             border-radius: 5px;
@@ -110,14 +110,16 @@
     <div class="image-container">
         <img id="image" src="/<%= name %>.png" alt="<%= actualName %>">
 
-        <div class="wanttogo">
-            <form id="wantForm">
-                <button type="submit" class="btn btn-secondary">Add to Want-to-Go List</button>
-            </form>
-
-            <!-- Feedback message -->
-            <div id="feedback-msg"></div>
-        </div>
+        <div class="wanttogo" style="position: fixed; left: 30px; top: 470px; z-index: 1000;">
+    <!-- Wrap the form in a relative container -->
+    <div style="position: relative; display: inline-block;">
+        <form id="wantForm" method="POST" action="/destination/annapurna/add">
+            <button type="submit" class="btn btn-secondary">Add to Want-to-Go List</button>
+        </form>
+        <!-- Feedback will appear here, under the button -->
+        <div id="feedback-msg"></div>
+    </div>
+</div>
     </div>
 
     <!-- Description -->
@@ -127,7 +129,7 @@
 
     <!-- Video -->
     <div class="video">
-        <iframe width="500" height="315"
+        <iframe width="500" height="170"
                 src="https://www.youtube.com/embed/vG_Ck5bTOnY?si=fXQsJeNNZjZy-bob"
                 title="YouTube video player"
                 frameborder="0"

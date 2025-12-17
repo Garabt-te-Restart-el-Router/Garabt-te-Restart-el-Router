@@ -52,7 +52,8 @@
         margin-top: 10px;
         width: 100%;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
     }
 
     .btn-secondary {
@@ -60,10 +61,7 @@
     }
 
     #feedback-msg {
-        position: absolute;
-        top: -40px;
-        left: 50%;
-        transform: translateX(-50%);
+        margin-top: 8px; /* below the button */
         padding: 8px 12px;
         border-radius: 5px;
         font-weight: bold;
