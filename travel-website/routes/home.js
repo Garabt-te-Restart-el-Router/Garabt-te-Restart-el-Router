@@ -38,12 +38,28 @@ router.get("/category/:name", async (req, res) => {
 
 // ---------- WANT-TO-GO LIST ----------
 router.get("/want-to-go", async (req, res) => {
-    const db = await connect();
-    const users = db.collection("myCollection");
+    try {
+        if (!req.session.user) return res.redirect("/login");
 
-    const user = await users.findOne({ username: req.session.user.username });
+        const db = await connect();
+        const users = db.collection("myCollection");
+        const destinationsCol = db.collection("destinations");
 
-    res.render("wantToGo", { list: user.wantToGo });
+        const user = await users.findOne({
+            username: req.session.user.username
+        });
+
+        // Get full destination objects
+        const destinations = await destinationsCol
+            .find({ name: { $in: user.wantToGo } })
+            .toArray();
+
+        res.render("wantToGo", { destinations });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server error");
+    }
 });
 
 module.exports = router;
