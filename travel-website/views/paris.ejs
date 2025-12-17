@@ -49,13 +49,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Paris</title>
+    <title><%= actualName %></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
 <body>
     <%- include('partials/navbar') %>
+    <div class="container">
+        <h1><%= actualName %></h1>
+    </div>
     <div class="container1">
         <img id="image" src="/paris.png" width="193" height="300">
     </div>
@@ -63,7 +66,7 @@
         It is known as the most romantic city in the world, and is home to some world famous sights that are constantly shown in travel magazines, movies, and other works of art. Paris, the capital of France, has a population of over two million people and is one of Europe's most-visited cities.
     </div>
     <div class="wanttogo">
-        <form method="POST" action="/destination/annapurna/add">
+        <form method="POST" action="/destination/<%= name %>/add">
             <button type="submit" class="btn btn-secondary ml-3">Add to Want-to-Go List</button>
         </form>
     </div>
