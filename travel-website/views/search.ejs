@@ -5,8 +5,7 @@
         body {
             background-image: url("/background3.jpg");
             background-repeat: no-repeat;
-            background-size: 100%;
-            /* Removes the white space at the top */
+            background-size: cover;
             margin: 0;
             padding: 0;
         }
@@ -18,15 +17,63 @@
             margin-top: 50px;
         }
 
-        /* Ensure navbar stays at the very top */
         nav {
             margin-top: 0 !important;
         }
 
+        .scroll-panel {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 15px 0;
+        }
+
+        .scroll-row {
+            display: flex;
+            gap: 20px; /* space between cards */
+        }
+
+        .scroll-panel::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .scroll-panel::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 4px;
+        }
+
+        .scroll-panel::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
+        }
+
+        .card {
+            flex: 0 0 300px; /* fixed width for cards */
+            display: flex;
+            flex-direction: column;
+            height: 100%; 
+        }
+
+        .card img {
+            height: 400px; /* uniform image height */
+            object-fit: cover;
+        }
+
         .card-body {
-            background-color: #d3d3d3; /* light grey */
+            background-color: #d3d3d3;
             padding: 15px;
             border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            margin-top: 10px;
         }
     </style>
     <meta charset="UTF-8">
@@ -35,50 +82,43 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <%- include('partials/navbar') %>
-    
-    <main class="container">
-        <h1>Search Results</h1>
+<%- include('partials/navbar') %>
 
-        <% if (locals.notFound || (locals.results && results.length === 0)) { %>
-            <div class="no-results" style="text-align: center; color: white; margin-top: 50px;">
-                <p>No destinations found matching your search.</p>
-                <a href="/home" class="btn btn-secondary">Go back home</a>
-            </div>
-        <% } else if (locals.results && results.length > 0) { %>
-            <div class="row mt-5">
+<main class="container">
+    <h1>Search Results</h1>
+
+    <% if (locals.notFound || (locals.results && results.length === 0)) { %>
+        <div class="no-results" style="text-align: center; color: white; margin-top: 50px;">
+            <p>No destinations found matching your search.</p>
+            <a href="/home" class="btn btn-secondary">Go back home</a>
+        </div>
+    <% } else if (locals.results && results.length > 0) { %>
+        <div class="scroll-panel mt-4">
+            <div class="scroll-row">
                 <% results.forEach(destination => { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h3 class="card-title"><%= destination.actualName %></h3>
-                                
-                                <p class="card-text">
-                                    <strong>Country:</strong> <%= destination.country || 'Unknown' %>
-                                </p>
-                                
-                                <p class="card-text">
-                                    <strong>Category:</strong> <%= destination.actualCategoryName || 'General' %>
-                                </p>
-                                
-                                <p class="card-text">
-                                    <%= destination.description || '' %>
-                                </p>
-                                
-                                <a href="/destination/<%= destination.name.toLowerCase() %>" class="btn btn-primary">
-                                    View Details
-                                </a>
+                    <div class="card">
+                        <img src="/<%= destination.name.toLowerCase() %>.png"
+                             class="card-img-top" alt="<%= destination.actualName %>">
+                        <div class="card-body">
+                            <div>
+                                <h5 class="card-title"><%= destination.actualName %></h5>
+                                <p class="card-text"><strong>Country:</strong> <%= destination.country || 'Unknown' %></p>
+                                <p class="card-text"><strong>Category:</strong> <%= destination.actualCategoryName || 'General' %></p>
+                                <p class="card-text"><%= destination.description || '' %></p>
                             </div>
+                            <a href="/destination/<%= destination.name.toLowerCase() %>" class="btn btn-primary">View Details</a>
                         </div>
                     </div>
                 <% }) %>
             </div>
-        <% } else { %>
-            <p style="text-align: center; color: white; margin-top: 20px;">
-                Please enter a keyword to search.
-            </p>
-        <% } %>
-    </main>
-    <%- include('partials/back-button') %>
+        </div>
+    <% } else { %>
+        <p style="text-align: center; color: white; margin-top: 20px;">
+            Please enter a keyword to search.
+        </p>
+    <% } %>
+</main>
+
+<%- include('partials/back-button') %>
 </body>
 </html>
