@@ -11,13 +11,23 @@
             color: white;
             text-align: center;
             -webkit-text-stroke: 1px blue;
+            margin-top: 20px;
         }
-        .container1 {
+        
+        .image-container {
             position: fixed;
             left: 50px;
             top: 150px;
-            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
+        #image {
+            width: 193px;
+            height: 300px;
+        }
+
         .container2 {
             position: fixed;
             left: 300px;
@@ -31,129 +41,40 @@
             position: fixed;
             left: 700px;
             top: 150px;
-            color: white;
             width: 300px;
-            text-align: justify;
-            text-justify: inter-word;
         }
-        .wanttogo {
-            position: fixed;
-            left: 30px;
-            top: 470px;
-        }
-        #my {
-            zoom: 110%;
-        }
-
-        #feedback-msg {
-        margin-top: 8px; /* below the button */
-        padding: 8px 12px;
-        border-radius: 5px;
-        font-weight: bold;
-        white-space: nowrap;
-        display: none;
-        z-index: 100;
-        }
-
-        #feedback-msg.show {
-            display: block;
-            animation: fadeInOut 2.5s forwards;
-        }
-
-        #feedback-msg.success {
-            background-color: #28a745;
-            color: white;
-        }
-
-        #feedback-msg.error {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Mount Fuji</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
-
 <body>
     <%- include('partials/navbar') %>
+    
     <div class="container">
         <h1><%= actualName %></h1>
     </div>
-    <div class="container1">
+    
+    <div class="image-container">
         <img id="image" src="/fuji.png" width="193" height="300">
+        <%- include('partials/want-to-go-btn') %>
     </div>
+    
     <div class="container2">
         Rising as Japan's highest peak, Mount Fuji is an iconic, symmetrical stratovolcano revered for its snow-capped summit and cultural sanctity. A UNESCO World Heritage site, this dormant giant has long inspired artists and pilgrims with its solitary beauty. Visible from Tokyo on clear days, it remains a spiritual symbol and a bucket-list destination, offering climbers a breathtaking sunrise view from the "roof of Japan" atop its majestic, cratered rim.
     </div>
-    <div class="wanttogo" style="position: fixed; left: 30px; top: 470px; z-index: 1000;">
-    <!-- Wrap the form in a relative container -->
-    <div style="position: relative; display: inline-block;">
-        <form id="wantForm" method="POST" action="/destination/fuji/add">
-            <button type="submit" class="btn btn-secondary">Add to Want-to-Go List</button>
-        </form>
-        <!-- Feedback will appear here, under the button -->
-        <div id="feedback-msg"></div>
-    </div>
-</div>
-
-<script>
-const form = document.getElementById('wantForm');
-const feedback = document.getElementById('feedback-msg');
-
-form.addEventListener('submit', async (e) => {
-    e.preventDefault(); // prevent form submission
-
-    const url = form.action;
-
-    try {
-        const res = await fetch(url, { method: 'POST' });
-        const text = await res.text();
-
-        let msg = 'Added to your Want-to-Go List!';
-        let cls = 'success';
-
-        if (text.includes('Already in your Want-to-Go')) {
-            msg = 'Already in your Want-to-Go List!';
-            cls = 'error';
-        }
-
-        feedback.innerText = msg;
-        feedback.className = `feedback-message show ${cls}`;
-
-        // hide after 2.5s
-        setTimeout(() => feedback.className = 'feedback-message', 2500);
-
-    } catch (err) {
-        console.error(err);
-        feedback.innerText = 'Error adding destination.';
-        feedback.className = 'feedback-message show error';
-        setTimeout(() => feedback.className = 'feedback-message', 2500);
-    }
-});
-</script>
-
+    
     <div class="video">
-       <iframe width="560" height="315" 
-    src="https://www.youtube.com/embed/fXJ8EB1WoF4?si=mI5nGicOCI8J_v_g"
-    title="YouTube video player" 
-    frameborder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-    allowfullscreen>
-</iframe>
+        <iframe width="500" height="315" 
+            src="https://www.youtube.com/embed/fXJ8EB1WoF4?si=mI5nGicOCI8J_v_g"
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+        </iframe>
     </div>
-<%- include('partials/back-button') %>
+    
+    <%- include('partials/back-button') %>
 </body>
-
 </html>
