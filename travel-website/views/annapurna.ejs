@@ -30,50 +30,6 @@
             height: 300px;
         }
 
-        /* Want-to-go button */
-        .wanttogo {
-            position: relative;
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .btn-secondary {
-            font-weight: bold;
-        }
-
-        /* Feedback message overlay */
-        #feedback-msg {
-            position: absolute;
-            top: 45px; /* distance from button */
-            left: 70%;
-            transform: translateX(-50%);
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            white-space: nowrap;
-            display: none;
-            z-index: 100;
-        }
-        #feedback-msg.show {
-            display: block;
-            animation: fadeInOut 2.5s forwards;
-        }
-        #feedback-msg.success {
-            background-color: #28a745;
-            color: white;
-        }
-        #feedback-msg.error {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
         /* Description text */
         .container2 {
             position: fixed;
@@ -106,25 +62,17 @@
         <h1><%= actualName %></h1>
     </div>
 
-    <!-- Image + Want-to-Go -->
+    <!-- Image -->
     <div class="image-container">
         <img id="image" src="/<%= name %>.png" alt="<%= actualName %>">
-
-        <div class="wanttogo" style="position: fixed; left: 30px; top: 470px; z-index: 1000;">
-    <!-- Wrap the form in a relative container -->
-    <div style="position: relative; display: inline-block;">
-        <form id="wantForm" method="POST" action="/destination/annapurna/add">
-            <button type="submit" class="btn btn-secondary">Add to Want-to-Go List</button>
-        </form>
-        <!-- Feedback will appear here, under the button -->
-        <div id="feedback-msg"></div>
-    </div>
-</div>
+        
+        <!-- Include the want-to-go partial -->
+        <%- include('partials/want-to-go-btn') %>
     </div>
 
     <!-- Description -->
     <div class="container2">
-        Annapurna Circuit has been voted as the best long-distance trek in the world, as it combined a wide variety of climate zones from tropics at 600m above sea level to the arctic at 5416m above sea level at the Thorong La pass and cultural variety from Hindu villages at the low foothills to the Tibetan culture of Manang.
+        <%= description || 'Annapurna Circuit has been voted as the best long-distance trek in the world, as it combined a wide variety of climate zones from tropics at 600m above sea level to the arctic at 5416m above sea level at the Thorong La pass and cultural variety from Hindu villages at the low foothills to the Tibetan culture of Manang.' %>
     </div>
 
     <!-- Video -->
@@ -140,44 +88,5 @@
 
     <!-- Back button -->
     <%- include('partials/back-button') %>
-
-    <!-- JS -->
-    <script>
-        const form = document.getElementById('wantForm');
-        const feedback = document.getElementById('feedback-msg');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // prevent redirect
-            const url = `/destination/<%= name %>/add`;
-
-            try {
-                const res = await fetch(url, { method: 'POST' });
-                const text = await res.text();
-
-                let msg = 'Added to your Want-to-Go List!';
-                let cls = 'success';
-
-                if (text.includes('Already in your Want-to-Go')) {
-                    msg = 'Already in your Want-to-Go List!';
-                    cls = 'error';
-                }
-
-                feedback.innerText = msg;
-                feedback.className = `show ${cls}`;
-
-                setTimeout(() => {
-                    feedback.className = '';
-                }, 2500);
-
-            } catch (err) {
-                console.error(err);
-                feedback.innerText = 'Error adding destination.';
-                feedback.className = 'show error';
-                setTimeout(() => {
-                    feedback.className = '';
-                }, 2500);
-            }
-        });
-    </script>
 </body>
 </html>

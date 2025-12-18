@@ -8,42 +8,58 @@
 </div>
 
 <script>
-    const form = document.getElementById('wantForm');
-    const feedback = document.getElementById('feedback-msg');
+    (function() {
+        const form = document.getElementById('wantForm');
+        const feedback = document.getElementById('feedback-msg');
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // prevent default redirect
-
-        const url = `/destination/<%= name %>/add`;
-
-        try {
-            const res = await fetch(url, { method: 'POST' });
-            const text = await res.text();
-
-            let msg = 'Added to your Want-to-Go List!';
-            let cls = 'success';
-
-            if (text.includes('Already in your Want-to-Go')) {
-                msg = 'Already in your Want-to-Go List!';
-                cls = 'error';
-            }
-
-            feedback.innerText = msg;
-            feedback.className = `show ${cls}`;
-
-            setTimeout(() => {
-                feedback.className = '';
-            }, 2500);
-
-        } catch (err) {
-            console.error(err);
-            feedback.innerText = 'Error adding destination.';
-            feedback.className = 'show error';
-            setTimeout(() => {
-                feedback.className = '';
-            }, 2500);
+        if (!form || !feedback) {
+            console.error('Form or feedback element not found');
+            return;
         }
-    });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get the destination name from the current URL
+            const pathParts = window.location.pathname.split('/');
+            const destinationName = pathParts[pathParts.indexOf('destination') + 1];
+            const url = `/destination/${destinationName}/add`;
+
+            console.log('Submitting to:', url);
+
+            try {
+                const res = await fetch(url, { method: 'POST' });
+                const text = await res.text();
+
+                console.log('Server response:', text);
+
+                let msg = 'Added to your Want-to-Go List!';
+                let cls = 'success';
+
+                if (text.toLowerCase().includes('already')) {
+                    msg = 'Already in your Want-to-Go List!';
+                    cls = 'error';
+                }
+
+                feedback.innerText = msg;
+                feedback.className = `show ${cls}`;
+
+                setTimeout(() => {
+                    feedback.className = '';
+                    feedback.innerText = '';
+                }, 2500);
+
+            } catch (err) {
+                console.error('Fetch error:', err);
+                feedback.innerText = 'Error adding destination.';
+                feedback.className = 'show error';
+                setTimeout(() => {
+                    feedback.className = '';
+                    feedback.innerText = '';
+                }, 2500);
+            }
+        });
+    })();
 </script>
 
 <style>
@@ -61,17 +77,23 @@
     }
 
     #feedback-msg {
-        margin-top: 8px; /* below the button */
+        position: absolute;
+        top: 45px; /* below the button */
+        left: 50%;
+        transform: translateX(-50%);
         padding: 8px 12px;
         border-radius: 5px;
         font-weight: bold;
         white-space: nowrap;
-        display: none;
+        opacity: 0;
+        visibility: hidden;
         z-index: 100;
+        pointer-events: none;
     }
 
     #feedback-msg.show {
-        display: block;
+        opacity: 1;
+        visibility: visible;
         animation: fadeInOut 2.5s forwards;
     }
 
