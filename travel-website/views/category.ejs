@@ -1,98 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= actualCategoryName %> Destinations</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
     <style>
         body {
             background-image: url("/background3.jpg");
             background-repeat: no-repeat;
-            background-size: 100%;
+            background-size: cover;
+            min-height: 100vh;
         }
 
         h1 {
             color: white;
             text-align: center;
             -webkit-text-stroke: 1px blue;
-            margin-top: 50px;
+            margin: 40px 0;
         }
 
-        .categories-container {
-            display: flex;         /* arrange items in a row */
-            justify-content: start; /* align items to start */
-            gap: 50px;             /* spacing between items */
-            margin: 50px auto;     /* center container horizontally */
-            padding: 20px;
-            flex-wrap: wrap;       /* wrap to next line if screen is small */
-            max-width: 1200px;
+        /* GRID */
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding-bottom: 60px;
         }
 
-        .category-item {
-            text-align: center;
-            color: white;
+        /* CARD */
+        .card {
+            height: 100%;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
 
-        .category-item img {
-            width: 100px;
-            height: 100px;
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.4);
         }
 
-        .wanttogo {
-            position: fixed;
-            left: 50px;
-            bottom: 50px;
+        .card-img-top {
+            height: 100%;
+            object-fit: cover;
         }
 
         .card-body {
-        background-color: #d3d3d3; /* light grey */
-        padding: 15px;
-        border-radius: 5px;
+            background-color: #d3d3d3;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            border-radius: 0 0 5px 5px;
         }
 
-        #back-btn {
-        position: fixed;
-        bottom: 50px;
-        left: 50px;
-        z-index: 1000;
-        padding: 10px 20px;
-        font-weight: bold;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        #back-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        /* EMPTY STATE */
+        .empty-message {
+            text-align: center;
+            color: white;
+            font-size: 1.4rem;
+            margin-top: 80px;
         }
     </style>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= actualCategoryName %> Destinations</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
-<body>
-    <%- include('partials/navbar') %>
 
-    <div class="container mt-4">
-        <h1><%= actualCategoryName %> Destinations</h1>
-        <div class="row">
-            <% if (destinations.length === 0) { %>
-                <p>No destinations found in this category.</p>
-            <% } %>
-            <% destinations.forEach(dest => { %>
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <!-- Image uses internal name -->
-                        <img src="/<%= dest.name %>.png" class="card-img-top" alt="<%= dest.actualName %>">
-                        <div class="card-body">
-                            <!-- Display actual destination name and country -->
+<body>
+
+<%- include('partials/navbar') %>
+
+<div class="container">
+    <h1><%= actualCategoryName %> Destinations</h1>
+
+    <% if (!myCollection || myCollection.length === 0) { %>
+        <div class="empty-message">
+            No destinations found in this category.
+        </div>
+    <% } else { %>
+        <div class="destinations-grid">
+            <% myCollection.forEach(dest => { %>
+                <div class="card">
+                    <img
+                        src="/<%= dest.name %>.png"
+                        class="card-img-top"
+                        alt="<%= dest.actualName %>"
+                    >
+
+                    <div class="card-body">
+                        <div>
                             <h5 class="card-title"><%= dest.actualName %></h5>
-                            <p class="card-text"><%= dest.country %></p>
-                            <a href="/destination/<%= dest.name %>" class="btn btn-primary">View</a>
+                            <p class="card-text mb-2">
+                                <strong><%= dest.country || "Unknown" %></strong>
+                            </p>
                         </div>
+
+                        <a
+                            href="/destination/<%= dest.name %>"
+                            class="btn btn-primary btn-block"
+                        >
+                            View Destination
+                        </a>
                     </div>
                 </div>
             <% }) %>
         </div>
+    <% } %>
+</div>
 
 <%- include('partials/back-button') %>
+
 </body>
 </html>

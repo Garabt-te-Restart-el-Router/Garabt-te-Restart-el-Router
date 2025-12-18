@@ -1,75 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traveltopia</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
     <style>
         body {
             background-image: url("/background3.jpg");
             background-repeat: no-repeat;
-            background-size: 100%;
+            background-size: cover;
+            min-height: 100vh;
         }
 
         h1 {
             color: white;
             text-align: center;
             -webkit-text-stroke: 1px blue;
-            margin-top: 50px;
+            margin: 60px 0 40px;
         }
 
+        /* CATEGORY GRID */
         .categories-container {
-            display: flex;           
-            justify-content: center; /* <-- changed from start to center */
-            gap: 50px;               
-            margin: 50px auto;       
-            padding: 20px;
-            flex-wrap: wrap;         
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 50px;
             max-width: 1200px;
+            margin: 0 auto 80px;
+            padding: 20px;
         }
 
         .category-item {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 14px;
+            padding: 25px 20px;
+            width: 220px;
             text-align: center;
             color: white;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .category-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.6);
         }
 
         .category-item img {
             width: 100px;
             height: 100px;
+            object-fit: contain;
+            margin-bottom: 15px;
         }
 
-        .wanttogo {
-            position: fixed;
-            left: 50px;
-            bottom: 50px;
+        .category-item label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .category-item .btn {
+            width: 100%;
+            border-radius: 8px;
         }
     </style>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traveltopia</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
 <body>
+
     <%- include('partials/navbar') %>
 
-    <div class="container">
-        <h1>Welcome, <%= username %>!</h1>
-    </div>
+    <h1>Welcome, <%= username %>!</h1>
 
     <div class="categories-container">
-  <% categories.forEach(function(cat) { %>
-    <div class="category-item" style="position: relative; z-index: 10;">
-      <img src="<%= cat.img %>" alt="<%= cat.name %>">
-      <br>
-      <label class="ml-2 my-2"><%= cat.name %></label>
-      <br>
-      <button
-        type="button"
-        class="btn btn-secondary mt-2"
-        onclick="window.location.href='/category/<%= cat.name.toLowerCase() %>';">
-        View
-      </button>
+        <% categories.forEach(cat => { %>
+            <div class="category-item">
+                <img src="<%= cat.img %>" alt="<%= cat.name %>">
+                <label><%= cat.name %></label>
+                <button
+                    class="btn btn-secondary mt-2"
+                    onclick="window.location.href='<%= cat.route %>'">
+                    View
+                </button>
+            </div>
+        <% }) %>
     </div>
-  <% }); %>
-</div>
+
 </body>
 </html>

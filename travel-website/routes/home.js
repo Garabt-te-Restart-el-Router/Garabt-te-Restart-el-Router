@@ -2,11 +2,14 @@ const express = require("express");
 const router = express.Router();
 const { connect } = require("../database");
 
-// ---------- HOME PAGE ----------
+/* =========================
+   HOME PAGE
+========================= */
 router.get("/home", (req, res) => {
+    if (!req.session.user) return res.redirect("/login");
+
     const username = req.session.user.username;
-    
-    // Pass categories dynamically
+
     const categories = [
         { name: "Hiking", img: "/hiking.png", route: "/category/hiking" },
         { name: "Cities", img: "/cities.png", route: "/category/cities" },
@@ -18,57 +21,75 @@ router.get("/home", (req, res) => {
     res.render("home", { username, categories });
 });
 
-// ---------- CATEGORY PAGE ----------
+/* =========================
+   CATEGORY PAGE
+   (USES myCollection ONLY)
+========================= */
 router.get("/category/:name", async (req, res) => {
+    if (!req.session.user) return res.redirect("/login");
+
     const category = req.params.name;
 
     const db = await connect();
-    const destinations = db.collection("destinations");
+    const myCollection = db.collection("myCollection");
 
-    const list = await destinations.find({ category }).toArray();
+    // Get ALL destinations in this category
+    const list = await myCollection.find({
+        category: category
+    }).toArray();
 
-    const actualCategoryName = list.length > 0 ? list[0].actualCategoryName : category;
+    const actualCategoryName =
+        list.length > 0 ? list[0].actualCategoryName : category;
 
     res.render("category", {
         category,
         actualCategoryName,
-        destinations: list
+        myCollection: list
     });
 });
 
-// ---------- WANT-TO-GO LIST ----------
+/* =========================
+   WANT-TO-GO LIST
+   (NO LIMIT, NO PAGINATION)
+========================= */
 router.get("/want-to-go", async (req, res) => {
+    if (!req.session.user) return res.redirect("/login");
+
     const db = await connect();
-    const users = db.collection("myCollection");
-    const destinationsCol = db.collection("destinations");
+    const myCollection = db.collection("myCollection");
 
     const username = req.session.user.username;
 
-    const user = await users.findOne({ username });
+    const user = await myCollection.findOne({ username });
 
-    // get ALL destination objects (no pagination for horizontal scroll)
-    const destinations = await destinationsCol.find({
+    if (!user || !user.wantToGo || user.wantToGo.length === 0) {
+        return res.render("wantToGo", { myCollection: [] });
+    }
+
+    // Fetch destinations FROM SAME COLLECTION
+    const list = await myCollection.find({
         name: { $in: user.wantToGo }
     }).toArray();
 
     res.render("wantToGo", {
-        destinations
+        myCollection: list
     });
 });
 
-
-// ---------- REMOVE FROM WANT-TO-GO ----------
+/* =========================
+   REMOVE FROM WANT-TO-GO
+========================= */
 router.post("/destination/:name/remove", async (req, res) => {
     try {
         if (!req.session.user) return res.redirect("/login");
 
         const db = await connect();
-        const users = db.collection("myCollection");
+        const myCollection = db.collection("myCollection");
 
         const username = req.session.user.username;
         const destName = req.params.name.toLowerCase().trim();
 
-        await users.updateOne(
+        await myCollection.updateOne(
             { username },
             { $pull: { wantToGo: destName } }
         );
@@ -80,6 +101,5 @@ router.post("/destination/:name/remove", async (req, res) => {
         res.status(500).send("Server error");
     }
 });
-
 
 module.exports = router;
