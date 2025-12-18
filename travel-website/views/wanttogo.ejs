@@ -1,75 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Want-to-Go List</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <style>
 body {
     background-image: url("/background3.jpg");
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
     color: white;
     text-align: center;
     -webkit-text-stroke: 1px blue;
-    margin-top: 40px;
+    margin-top: 50px;
+}
+
+nav {
+    margin-top: 0 !important;
+}
+
+.scroll-panel {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 15px 0;
+}
+
+.scroll-row {
+    display: flex;
+    gap: 20px;
+}
+
+.scroll-panel::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-panel::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+.scroll-panel::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+.card {
+    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card img {
+    height: 400px;
+    object-fit: cover;
 }
 
 .card-body {
-    background-color: #e0e0e0;
-    text-align: center;
-}
-
-/* EMPTY STATE */
-.empty-state {
-    text-align: center;
-    margin-top: 120px;
-}
-.empty-state h2 {
-    color: #ff4d4d;
-    font-size: 2.8rem;
-    font-weight: bold;
-    opacity: 0;
-    animation: fadeIn 1.5s forwards;
-}
-.empty-state p {
-    color: white;
-    font-size: 1.2rem;
-    margin-top: 15px;
-    opacity: 0;
-    animation: fadeIn 1.5s forwards;
-    animation-delay: 0.5s;
-}
-.browse-btn {
-    margin-top: 20px;
-    font-size: 1.1rem;
-    opacity: 0;
-    animation: fadeIn 1.5s forwards;
-    animation-delay: 1s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* CARD REMOVE ANIMATION */
-.destination-card {
-    transition: opacity 0.35s ease, transform 0.35s ease;
-}
-.destination-card.removing {
-    opacity: 0;
-    transform: translateX(-40px);
-}
-
-/* PAGINATION */
-.pagination-container {
+    background-color: #d3d3d3;
+    padding: 15px;
+    border-radius: 5px;
     display: flex;
-    justify-content: center;
-    margin: 30px 0 40px;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
 }
 
-/* TOAST */
+.card-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.btn-primary {
+    margin-top: 10px;
+}
+
+/* Toast */
 .toast {
     position: fixed;
     bottom: 30px;
@@ -78,8 +89,6 @@ h1 {
     color: white;
     padding: 14px 18px;
     border-radius: 8px;
-    display: flex;
-    gap: 12px;
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.3s ease;
@@ -89,122 +98,92 @@ h1 {
     opacity: 1;
     transform: translateY(0);
 }
-.toast button {
-    background: none;
-    border: none;
-    color: #4da6ff;
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    margin-top: 120px;
+}
+.empty-state h2 {
+    color: #ff4d4d;
+    font-size: 2.5rem;
     font-weight: bold;
-    cursor: pointer;
+}
+.empty-state p {
+    color: white;
+    font-size: 1.2rem;
+    margin-top: 15px;
+}
+.empty-state .browse-btn {
+    margin-top: 20px;
+    font-size: 1.1rem;
 }
 </style>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Want-to-Go List</title>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
-
 <body>
+
 <%- include('partials/navbar') %>
 
-<h1>Your Want-To-Go List</h1>
+<main class="container">
+    <h1>Your Want-To-Go List</h1>
 
-<div class="container mt-4">
-    <div class="row" id="cards-container"></div>
-
-    <div class="pagination-container" id="pagination">
-        <button class="btn btn-secondary mr-2" id="prev-btn">Previous</button>
-        <span class="text-white align-self-center" id="page-indicator"></span>
-        <button class="btn btn-secondary ml-2" id="next-btn">Next</button>
+    <div class="scroll-panel mt-4">
+        <div id="cards-container" class="scroll-row"></div>
     </div>
-</div>
+</main>
 
-<!-- TOAST -->
+<!-- Toast -->
 <div class="toast" id="toast">
     <span id="toast-text"></span>
-    <button id="undo-btn">UNDO</button>
 </div>
 
 <%- include('partials/back-button') %>
 
 <script>
 (() => {
-    let currentPage = <%= currentPage %>;
-    let totalPages = <%= totalPages %>;
-    let lastRemoved = null;
-    let undoTimer = null;
-
     const cardsContainer = document.getElementById('cards-container');
-    const pagination = document.getElementById('pagination');
-    const pageIndicator = document.getElementById('page-indicator');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
     const toast = document.getElementById('toast');
     const toastText = document.getElementById('toast-text');
-    const undoBtn = document.getElementById('undo-btn');
 
-    let currentDestinations = <%- JSON.stringify(destinations) %>;
+    let destinations = <%- JSON.stringify(destinations) %>;
 
-    renderCards(currentDestinations);
-    updatePagination();
+    renderCards(destinations);
 
-    prevBtn.onclick = () => loadPage(currentPage - 1);
-    nextBtn.onclick = () => loadPage(currentPage + 1);
-
-    async function loadPage(page) {
-        if (page < 1 || page > totalPages) return;
-
-        const res = await fetch(`/want-to-go?page=${page}&ajax=true`);
-        const data = await res.json();
-
-        currentPage = data.currentPage;
-        totalPages = data.totalPages;
-        currentDestinations = data.destinations;
-
-        renderCards(currentDestinations);
-        updatePagination();
-    }
-
-    function renderCards(destinations) {
-        cardsContainer.innerHTML = '';
-
-        if (!destinations || destinations.length === 0) {
-            pagination.style.display = 'none';
-            cardsContainer.innerHTML = `
-            <div class="empty-state col-12">
+    function renderCards(list) {
+        const scrollPanel = cardsContainer.parentElement;
+        
+        if (!list || list.length === 0) {
+            scrollPanel.innerHTML = `
+            <div class="empty-state">
                 <h2>Your Want-to-Go list is empty</h2>
-                <p>Start exploring destinations and add places you’d love to visit 🌍</p>
-                <button class="btn btn-success browse-btn"
-                        onclick="window.location.href='/home'">
-                    Browse Destinations
-                </button>
+                <p>Start exploring destinations and add places you'd love to visit 🌍</p>
+                <button class="btn btn-success browse-btn" onclick="window.location.href='/home'">Browse Destinations</button>
             </div>`;
             return;
         }
+        
+        // Restore scroll structure if it was replaced by empty state
+        if (!scrollPanel.querySelector('.scroll-row')) {
+            scrollPanel.innerHTML = '<div id="cards-container" class="scroll-row"></div>';
+            cardsContainer = document.getElementById('cards-container');
+        }
+        
+        cardsContainer.innerHTML = '';
 
-        destinations.forEach((dest, index) => {
+        list.forEach((dest, index) => {
             cardsContainer.insertAdjacentHTML('beforeend', `
-            <div class="col-md-4 mb-4 destination-card"
-                 data-name="${dest.name}"
-                 data-actual-name="${dest.actualName}"
-                 data-index="${index}">
-                <div class="card">
-                    <img src="/${dest.name}.png" class="card-img-top">
-                    <div class="card-body">
+            <div class="card">
+                <img src="/${dest.name}.png" alt="${dest.actualName}">
+                <div class="card-body">
+                    <div>
                         <h5 class="card-title">${dest.actualName}</h5>
-                        <p>${dest.country} · ${dest.actualCategoryName}</p>
-                        <div class="d-flex justify-content-center">
-                            <button class="btn btn-primary mr-2"
-                                    onclick="window.location.href='/destination/${dest.name}'">
-                                View
-                            </button>
-                            <button class="btn btn-danger remove-btn"
-                                    data-name="${dest.name}"
-                                    data-actual-name="${dest.actualName}"
-                                    data-index="${index}">
-                                Remove
-                            </button>
-                        </div>
+                        <p><strong>Country:</strong> ${dest.country || 'Unknown'}</p>
+                        <p><strong>Category:</strong> ${dest.actualCategoryName || 'General'}</p>
+                        <p>${dest.description || ''}</p>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-primary mr-2" onclick="window.location.href='/destination/${dest.name}'">View Details</button>
+                        <button class="btn btn-danger remove-btn" data-index="${index}" data-name="${dest.name}" data-actual-name="${dest.actualName}">Remove</button>
                     </div>
                 </div>
             </div>`);
@@ -216,89 +195,26 @@ h1 {
     function bindRemoveButtons() {
         document.querySelectorAll('.remove-btn').forEach(btn => {
             btn.onclick = async () => {
-                const card = btn.closest('.destination-card');
+                const card = btn.closest('.card');
                 const index = parseInt(btn.dataset.index);
+                const name = btn.dataset.name;
+                const actualName = btn.dataset.actualName;
 
-                lastRemoved = {
-                    name: btn.dataset.name,
-                    actualName: btn.dataset.actualName,
-                    card,
-                    index
-                };
+                await fetch(`/destination/${name}/remove`, { method: 'POST' });
 
-                await fetch(`/destination/${lastRemoved.name}/remove`, { method: 'POST' });
-
-                card.classList.add('removing');
-
-                setTimeout(() => {
-                    card.remove();
-                    currentDestinations.splice(index, 1);
-                    if (currentDestinations.length === 0) {
-                        loadPage(Math.max(1, currentPage - 1));
-                    } else {
-                        renderCards(currentDestinations);
-                        updatePagination();
-                    }
-                }, 350);
-
-                showToast(`Removed "${lastRemoved.actualName}"`);
+                destinations.splice(index, 1);
+                renderCards(destinations);
+                showToast(`Removed "${actualName}"`);
             };
         });
     }
 
-    undoBtn.onclick = async () => {
-        if (!lastRemoved) return;
-
-        // Remove empty state if visible
-        const emptyState = document.querySelector('.empty-state');
-        if (emptyState) emptyState.remove();
-
-        await fetch(`/destination/${lastRemoved.name}/add`, { method: 'POST' });
-
-        // Restore card in correct position
-        lastRemoved.card.classList.remove('removing');
-        const refCard = cardsContainer.children[lastRemoved.index];
-        if (refCard) {
-            cardsContainer.insertBefore(lastRemoved.card, refCard);
-            currentDestinations.splice(lastRemoved.index, 0, {
-                name: lastRemoved.name,
-                actualName: lastRemoved.actualName
-            });
-        } else {
-            cardsContainer.appendChild(lastRemoved.card);
-            currentDestinations.push({
-                name: lastRemoved.name,
-                actualName: lastRemoved.actualName
-            });
-        }
-
-        hideToast();
-        renderCards(currentDestinations);
-        updatePagination();
-    };
-
     function showToast(msg) {
         toastText.innerText = msg;
         toast.classList.add('show');
-        clearTimeout(undoTimer);
-        undoTimer = setTimeout(hideToast, 5000);
-    }
-
-    function hideToast() {
-        toast.classList.remove('show');
-        lastRemoved = null;
-    }
-
-    function updatePagination() {
-        if (totalPages <= 1) {
-            pagination.style.display = 'none';
-            return;
-        }
-
-        pagination.style.display = 'flex';
-        pageIndicator.innerText = `Page ${currentPage} of ${totalPages}`;
-        prevBtn.style.display = currentPage > 1 ? 'inline-block' : 'none';
-        nextBtn.style.display = currentPage < totalPages ? 'inline-block' : 'none';
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
     }
 })();
 </script>
