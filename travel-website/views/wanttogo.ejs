@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Want-to-Go List</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
 <style>
 body {
     background-image: url("/background3.jpg");
@@ -21,10 +22,6 @@ h1 {
     margin-top: 50px;
 }
 
-nav {
-    margin-top: 0 !important;
-}
-
 .scroll-panel {
     overflow-x: auto;
     overflow-y: hidden;
@@ -36,24 +33,10 @@ nav {
     gap: 20px;
 }
 
-.scroll-panel::-webkit-scrollbar {
-    height: 8px;
-}
-
-.scroll-panel::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 4px;
-}
-
-.scroll-panel::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-}
-
 .card {
     flex: 0 0 300px;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
 .card img {
@@ -68,16 +51,6 @@ nav {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    flex-grow: 1;
-}
-
-.card-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.btn-primary {
-    margin-top: 10px;
 }
 
 /* Toast */
@@ -99,7 +72,7 @@ nav {
     transform: translateY(0);
 }
 
-/* Empty state */
+/* Empty state animation */
 .empty-state {
     text-align: center;
     margin-top: 120px;
@@ -133,13 +106,12 @@ nav {
 }
 </style>
 </head>
-<body>
 
+<body>
 <%- include('partials/navbar') %>
 
 <main class="container">
     <h1>Your Want-To-Go List</h1>
-
     <div class="scroll-panel mt-4">
         <div id="cards-container" class="scroll-row"></div>
     </div>
@@ -158,26 +130,28 @@ nav {
     const toast = document.getElementById('toast');
     const toastText = document.getElementById('toast-text');
 
-    let destinations = <%- JSON.stringify(destinations) %>;
+    // ✅ Use myCollection from backend
+    let destinations = <%- JSON.stringify(myCollection || []) %>;
 
     renderCards(destinations);
 
     function renderCards(list) {
         cardsContainer.innerHTML = '';
-        
+
         if (!list || list.length === 0) {
             cardsContainer.parentElement.innerHTML = `
-            <div class="empty-state">
-                <h2>Your Want-to-Go list is empty</h2>
-                <p>Start exploring destinations and add places you'd love to visit 🌍</p>
-                <button class="btn btn-success browse-btn" onclick="window.location.href='/home'">Browse Destinations</button>
-            </div>`;
+                <div class="empty-state">
+                    <h2>Your Want-to-Go list is empty</h2>
+                    <p>Start exploring destinations and add places you'd love to visit 🌍</p>
+                    <button class="btn btn-success browse-btn" onclick="location.href='/home'">Browse Destinations</button>
+                </div>`;
             return;
         }
 
         list.forEach((dest, index) => {
             const card = document.createElement('div');
             card.className = 'card';
+
             card.innerHTML = `
                 <img src="/${dest.name}.png" alt="${dest.actualName}">
                 <div class="card-body">
@@ -188,10 +162,11 @@ nav {
                         <p>${dest.description || ''}</p>
                     </div>
                     <div class="d-flex justify-content-center">
-                        <button class="btn btn-primary mr-2" onclick="window.location.href='/destination/${dest.name}'">View Details</button>
+                        <button class="btn btn-primary mr-2" onclick="location.href='/destination/${dest.name}'">View Details</button>
                         <button class="btn btn-danger remove-btn" data-index="${index}" data-name="${dest.name}" data-actual-name="${dest.actualName}">Remove</button>
                     </div>
-                </div>`;
+                </div>
+            `;
             cardsContainer.appendChild(card);
         });
 
@@ -201,8 +176,7 @@ nav {
     function bindRemoveButtons() {
         document.querySelectorAll('.remove-btn').forEach(btn => {
             btn.onclick = async () => {
-                const card = btn.closest('.card');
-                const index = parseInt(btn.dataset.index);
+                const index = btn.dataset.index;
                 const name = btn.dataset.name;
                 const actualName = btn.dataset.actualName;
 
@@ -218,11 +192,10 @@ nav {
     function showToast(msg) {
         toastText.innerText = msg;
         toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+        setTimeout(() => toast.classList.remove('show'), 3000);
     }
 })();
 </script>
+
 </body>
 </html>
