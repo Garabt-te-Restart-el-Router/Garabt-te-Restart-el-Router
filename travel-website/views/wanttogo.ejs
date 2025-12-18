@@ -106,17 +106,30 @@ nav {
 }
 .empty-state h2 {
     color: #ff4d4d;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: bold;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
 }
 .empty-state p {
     color: white;
     font-size: 1.2rem;
     margin-top: 15px;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+    animation-delay: 0.5s;
 }
 .empty-state .browse-btn {
     margin-top: 20px;
     font-size: 1.1rem;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+    animation-delay: 1s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -150,10 +163,10 @@ nav {
     renderCards(destinations);
 
     function renderCards(list) {
-        const scrollPanel = cardsContainer.parentElement;
+        cardsContainer.innerHTML = '';
         
         if (!list || list.length === 0) {
-            scrollPanel.innerHTML = `
+            cardsContainer.parentElement.innerHTML = `
             <div class="empty-state">
                 <h2>Your Want-to-Go list is empty</h2>
                 <p>Start exploring destinations and add places you'd love to visit 🌍</p>
@@ -161,18 +174,11 @@ nav {
             </div>`;
             return;
         }
-        
-        // Restore scroll structure if it was replaced by empty state
-        if (!scrollPanel.querySelector('.scroll-row')) {
-            scrollPanel.innerHTML = '<div id="cards-container" class="scroll-row"></div>';
-            cardsContainer = document.getElementById('cards-container');
-        }
-        
-        cardsContainer.innerHTML = '';
 
         list.forEach((dest, index) => {
-            cardsContainer.insertAdjacentHTML('beforeend', `
-            <div class="card">
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
                 <img src="/${dest.name}.png" alt="${dest.actualName}">
                 <div class="card-body">
                     <div>
@@ -185,8 +191,8 @@ nav {
                         <button class="btn btn-primary mr-2" onclick="window.location.href='/destination/${dest.name}'">View Details</button>
                         <button class="btn btn-danger remove-btn" data-index="${index}" data-name="${dest.name}" data-actual-name="${dest.actualName}">Remove</button>
                     </div>
-                </div>
-            </div>`);
+                </div>`;
+            cardsContainer.appendChild(card);
         });
 
         bindRemoveButtons();
