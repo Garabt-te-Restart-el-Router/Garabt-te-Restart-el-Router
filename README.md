@@ -101,11 +101,12 @@ node app.js
 
 ### 👥 Team Members
 ---
-* **Yassin Mohamed Ahmed** – [LinkedIn]()
-* **** – [LinkedIn]()
-* **** – [LinkedIn]()
-* **** – [LinkedIn]()
-* **** – [LinkedIn]()
+* **Yassin Mohamed Ahmed** – [LinkedIn](https://www.linkedin.com/in/yassin-moatasem-293109380/)
+* **Mario Gadallah** – [LinkedIn](https://www.linkedin.com/in/-mario-gadallah-/)
+* **Salma Amr** – [LinkedIn](https://www.linkedin.com/in/salma-omar-07b097370/)
+* **Mohamed Zaytoun** – [LinkedIn](https://www.linkedin.com/in/mohamed-zaytoun-149802272/)
+
+
 
 
 ### 📜 License & Usage
