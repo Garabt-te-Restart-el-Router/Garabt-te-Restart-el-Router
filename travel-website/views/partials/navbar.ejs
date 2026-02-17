@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <a class="navbar-brand lively" href="/home">
         <img src="/traveltopia.png" alt="Traveltopia Logo" style="height:40px; width:auto; margin-right:10px;">
-        Traveltopia</a>
+        Traveltopia
+    </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
         <span class="navbar-toggler-icon"></span>
@@ -15,25 +16,23 @@
         </ul>
 
         <div class="form-inline my-2 my-lg-0 ml-auto">
-            <div style="position: relative; margin-right: 15px;">
-                <form action="/search" method="GET" autocomplete="off">
+            <div class="search-wrapper">
+                <form action="/search" method="GET" autocomplete="off" class="d-flex">
                     <input 
                         id="search-input" 
-                        class="form-control mr-sm-2" 
+                        class="form-control mr-2" 
                         type="search" 
                         name="q" 
                         placeholder="Search destinations..." 
                         aria-label="Search"
                     >
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
 
-                <div id="search-results" class="list-group" 
-                     style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1050; display: none;">
-                </div>
+                <div id="search-results" class="list-group search-results-dropdown"></div>
             </div>
 
-            <a href="/logout" class="btn btn-danger my-2 my-sm-0">Logout</a>
+            <a href="/logout" class="btn btn-danger ml-2">Logout</a>
         </div>
     </div>
 </nav>
@@ -44,16 +43,14 @@
     position: relative;
     transition: transform 0.3s ease, color 0.3s ease;
     font-weight: bold;
-    color: #fff; /* default color */
+    color: #fff;
 }
 
-/* Enlarge text on hover */
 .lively:hover {
     transform: scale(1.1);
-    color: #28a745 !important; /* optional: change color on hover */
+    color: #28a745 !important;
 }
 
-/* Optional: subtle underline effect */
 .lively::after {
     content: '';
     position: absolute;
@@ -67,6 +64,51 @@
 
 .lively:hover::after {
     width: 100%;
+}
+
+/* --- Search wrapper --- */
+.search-wrapper {
+    position: relative;
+    margin-right: 15px;
+}
+
+/* Search results dropdown */
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    display: none;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .search-wrapper {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .search-results-dropdown {
+        position: static;
+        margin-top: 5px;
+    }
+    
+    .btn-danger {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-top: 10px;
+    }
+}
+
+@media (min-width: 992px) {
+    .search-wrapper {
+        min-width: 300px;
+    }
 }
 </style>
 
@@ -93,17 +135,12 @@
             if (data.length > 0) {
                 data.forEach(item => {
                     const a = document.createElement('a');
-                    
-                    // LINK: Uses 'name' (e.g. fuji) for the URL
                     a.href = `/destination/${item.name.toLowerCase()}`; 
-                    
                     a.classList.add('list-group-item', 'list-group-item-action');
                     a.style.backgroundColor = '#343a40';
                     a.style.color = '#fff';
                     a.style.borderColor = '#454d55';
 
-                    // DISPLAY: Uses 'actualName' + 'country' + 'actualCategoryName'
-                    // Example output: "Japan - Mountains"
                     a.innerHTML = `
                         <div style="font-weight: bold;">${item.actualName}</div>
                         <small class="text-muted">
